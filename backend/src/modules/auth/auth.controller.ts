@@ -4,7 +4,7 @@ import { clearAuthCookie, setAuthCookie, signAuthToken } from "../../middleware/
 import { authenticateUser, getUserById } from "./auth.service";
 
 function toPublicUser(user: User) {
-  return { id: user.id, email: user.email };
+  return { id: user.id, email: user.email, role: user.role };
 }
 
 export async function login(req: Request, res: Response) {

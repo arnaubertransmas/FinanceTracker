@@ -29,7 +29,9 @@ async function promptForMissing(flags: Record<string, string>) {
 }
 
 async function main() {
-  const flags = parseFlags(process.argv.slice(2));
+  const argv = process.argv.slice(2);
+  const isAdmin = argv.includes("--admin");
+  const flags = parseFlags(argv.filter((arg) => arg !== "--admin"));
   const input = await promptForMissing(flags);
 
   const parsed = createUserSchema.safeParse(input);
@@ -53,10 +55,10 @@ async function main() {
 
   const passwordHash = await bcrypt.hash(password, 12);
   const user = await prisma.user.create({
-    data: { email, passwordHash },
+    data: { email, passwordHash, role: isAdmin ? "ADMIN" : "USER" },
   });
 
-  console.log(`Created user ${user.email} (${user.id}).`);
+  console.log(`Created ${isAdmin ? "admin " : ""}user ${user.email} (${user.id}).`);
 }
 
 main()

@@ -5,6 +5,7 @@ const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:4000";
 export interface SessionUser {
   id: string;
   email: string;
+  role: "USER" | "ADMIN";
 }
 
 export async function getSessionUser(): Promise<SessionUser | null> {

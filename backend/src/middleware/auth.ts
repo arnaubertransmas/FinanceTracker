@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
+import { prisma } from "../lib/prisma";
 
 const AUTH_COOKIE_NAME = "ft_session";
 
@@ -51,4 +52,13 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   } catch {
     res.status(401).json({ error: "Invalid or expired session" });
   }
+}
+
+export async function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  const user = await prisma.user.findUnique({ where: { id: req.userId! }, select: { role: true } });
+  if (user?.role !== "ADMIN") {
+    res.status(403).json({ error: "Admin access required" });
+    return;
+  }
+  next();
 }

@@ -11,6 +11,7 @@ import { transactionsRouter } from "./modules/transactions/transactions.routes";
 import { budgetsRouter } from "./modules/budgets/budgets.routes";
 import { csvImportRouter } from "./modules/csv-import/csv-import.routes";
 import { dashboardRouter } from "./modules/dashboard/dashboard.routes";
+import { usersRouter } from "./modules/users/users.routes";
 
 export function createApp() {
   const app = express();
@@ -29,6 +30,7 @@ export function createApp() {
   app.use("/api/budgets", budgetsRouter);
   app.use("/api/import", csvImportRouter);
   app.use("/api/dashboard", dashboardRouter);
+  app.use("/api/users", usersRouter);
 
   app.use(errorHandler);
 

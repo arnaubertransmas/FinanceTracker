@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { LayoutDashboard, ArrowLeftRight, Tags, PiggyBank, Wallet } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, Tags, PiggyBank, Wallet, ShieldCheck } from "lucide-react";
 import { getSessionUser } from "@/lib/serverApi";
 import { LogoutButton } from "@/components/ui/LogoutButton";
 import { BottomDock } from "@/components/ui/BottomDock";
@@ -19,6 +19,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect("/login");
   }
 
+  const navLinks = user.role === "ADMIN" ? [...NAV_LINKS, { href: "/admin", label: "Admin", icon: ShieldCheck }] : NAV_LINKS;
+
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       <header className="navbar bg-base-100 shadow-sm px-4 sticky top-0 z-30">
@@ -30,7 +32,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             FinanceTracker
           </Link>
           <nav className="hidden sm:flex gap-1">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
