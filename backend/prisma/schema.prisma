@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  INVESTMENT
+}
+
+enum RecurrenceFrequency {
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum BudgetLimitType {
+  FIXED
+  PERCENTAGE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  categories   Category[]
+  transactions Transaction[]
+  budgets      Budget[]
+
+  @@map("users")
+}
+
+model Category {
+  id     String           @id @default(uuid())
+  userId String           @map("user_id")
+  nombre String
+  tipo   TransactionType
+  color  String
+  icono  String
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  budgets      Budget[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, nombre, tipo])
+  @@index([userId])
+  @@map("categories")
+}
+
+model Transaction {
+  id          String           @id @default(uuid())
+  userId      String           @map("user_id")
+  type        TransactionType
+  categoryId  String           @map("category_id")
+  amount      Decimal          @db.Decimal(12, 2)
+  description String?
+  date        DateTime         @default(now()) @db.Date
+
+  recurring           Boolean               @default(false)
+  recurrenceFrequency RecurrenceFrequency?  @map("recurrence_frequency")
+
+  // Recurring-template scheduling state (lives on the template row itself).
+  nextOccurrenceDate DateTime? @map("next_occurrence_date") @db.Date
+  recurrenceActive   Boolean   @default(true) @map("recurrence_active")
+
+  // Self-relation: generated instances point back to the template that spawned them.
+  generatedFromId    String?       @map("generated_from_id")
+  generatedFrom      Transaction?  @relation("RecurrenceInstances", fields: [generatedFromId], references: [id], onDelete: SetNull)
+  generatedInstances Transaction[] @relation("RecurrenceInstances")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId, date])
+  @@index([userId, type])
+  @@index([recurring, recurrenceActive, nextOccurrenceDate])
+  @@map("transactions")
+}
+
+model Budget {
+  id           String          @id @default(uuid())
+  userId       String          @map("user_id")
+  categoryId   String          @map("category_id")
+  limitType    BudgetLimitType @map("limit_type")
+  monthlyLimit Decimal?        @map("monthly_limit") @db.Decimal(12, 2)
+  percentage   Decimal?        @db.Decimal(5, 2)
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, categoryId])
+  @@map("budgets")
+}

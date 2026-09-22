@@ -1,0 +1,53 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: financetracker --default;
+}
+
+@plugin "daisyui/theme" {
+  name: "financetracker";
+  default: true;
+  color-scheme: light;
+  --color-base-100: #ffffff;
+  --color-base-200: #f4f4f2;
+  --color-base-300: #e5e4e0;
+  --color-base-content: #1c1917;
+  --color-primary: #2563eb;
+  --color-primary-content: #ffffff;
+  --color-secondary: #7c3aed;
+  --color-secondary-content: #ffffff;
+  --color-accent: #0891b2;
+  --color-accent-content: #ffffff;
+  --color-neutral: #1c1917;
+  --color-neutral-content: #ffffff;
+  /* income / savings */
+  --color-success: #16a34a;
+  --color-success-content: #ffffff;
+  /* expense */
+  --color-error: #dc2626;
+  --color-error-content: #ffffff;
+  /* investment */
+  --color-info: #2563eb;
+  --color-info-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #1c1917;
+  --radius-box: 1rem;
+  --radius-field: 0.5rem;
+  --radius-selector: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+:root {
+  --font-app: Cambria, "Times New Roman", serif;
+}
+
+@theme inline {
+  --font-sans: var(--font-app);
+}
+
+body {
+  font-family: var(--font-app);
+}
