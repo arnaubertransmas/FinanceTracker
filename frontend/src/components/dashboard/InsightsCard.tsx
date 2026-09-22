@@ -137,7 +137,7 @@ export function InsightsCard({
   return (
     <div className="card bg-base-100 shadow-sm">
       <div className="card-body">
-        <div className="flex gap-1.5 overflow-x-auto pb-0.5">
+        <div className="flex flex-wrap gap-1.5">
           {TABS.map(({ key, label, icon: Icon }) => (
             <button
               key={key}

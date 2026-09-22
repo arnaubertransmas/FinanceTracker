@@ -7,7 +7,7 @@ import { BottomDock } from "@/components/ui/BottomDock";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/transactions", label: "Activity", icon: ArrowLeftRight },
+  { href: "/activities", label: "Activity", icon: ArrowLeftRight },
   { href: "/budgets", label: "Budgets", icon: PiggyBank },
   { href: "/categories", label: "Categories", icon: Tags },
 ];
