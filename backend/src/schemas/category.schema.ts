@@ -11,5 +11,11 @@ export const createCategorySchema = z.object({
 
 export const updateCategorySchema = createCategorySchema.partial();
 
+export const findOrCreateCategorySchema = z.object({
+  nombre: z.string().min(1).max(60),
+  tipo: transactionTypeSchema,
+});
+
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
 export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>;
+export type FindOrCreateCategoryInput = z.infer<typeof findOrCreateCategorySchema>;

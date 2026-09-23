@@ -11,6 +11,11 @@ export async function create(req: Request, res: Response) {
   res.status(201).json({ category });
 }
 
+export async function findOrCreate(req: Request, res: Response) {
+  const category = await categoriesService.findOrCreateCategory(req.userId!, req.body);
+  res.status(201).json({ category });
+}
+
 export async function update(req: Request, res: Response) {
   const category = await categoriesService.updateCategory(req.userId!, req.params.id, req.body);
   res.json({ category });

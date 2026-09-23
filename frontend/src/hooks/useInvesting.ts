@@ -32,8 +32,8 @@ export function useAddSnapshot() {
 export function useUpdateSnapshot() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, value }: { id: string; value: number }) =>
-      api.patch<{ snapshot: PortfolioSnapshot }>(`/investing/snapshots/${id}`, { value }).then((r) => r.snapshot),
+    mutationFn: ({ id, date, value }: { id: string; date?: string; value?: number }) =>
+      api.patch<{ snapshot: PortfolioSnapshot }>(`/investing/snapshots/${id}`, { date, value }).then((r) => r.snapshot),
     onSuccess: () => invalidate(queryClient),
   });
 }

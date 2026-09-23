@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Category, CreateCategoryInput } from "@/schemas/category.schema";
+import { Category, CreateCategoryInput, TransactionType } from "@/schemas/category.schema";
 
 const CATEGORIES_KEY = ["categories"] as const;
 
@@ -15,6 +15,15 @@ export function useCreateCategory() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: CreateCategoryInput) => api.post<{ category: Category }>("/categories", input).then((r) => r.category),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: CATEGORIES_KEY }),
+  });
+}
+
+export function useFindOrCreateCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { nombre: string; tipo: TransactionType }) =>
+      api.post<{ category: Category }>("/categories/find-or-create", input).then((r) => r.category),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: CATEGORIES_KEY }),
   });
 }

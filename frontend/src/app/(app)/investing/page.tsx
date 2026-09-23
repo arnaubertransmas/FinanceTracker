@@ -36,6 +36,7 @@ function EditSnapshotForm({
 }) {
   const { t } = useLanguage();
   const updateSnapshot = useUpdateSnapshot();
+  const [date, setDate] = useState(snapshot.date.slice(0, 10));
   const [value, setValue] = useState(snapshot.value);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +47,7 @@ function EditSnapshotForm({
       return;
     }
     try {
-      await updateSnapshot.mutateAsync({ id: snapshot.id, value: parsed });
+      await updateSnapshot.mutateAsync({ id: snapshot.id, date, value: parsed });
       onSaved();
     } catch {
       setError("Could not save changes");
@@ -56,7 +57,7 @@ function EditSnapshotForm({
   return (
     <li className="flex flex-col gap-2 py-3 bg-base-200/40 rounded-2xl px-3 -mx-3">
       <div className="flex items-center gap-2">
-        <span className="text-sm opacity-70 w-24 shrink-0">{snapshot.date.slice(0, 10)}</span>
+        <input type="date" className="input input-sm w-40" value={date} onChange={(e) => setDate(e.target.value)} />
         <label className="input input-sm flex-1">
           <span className="opacity-60">€</span>
           <input type="number" step="0.01" min="0" className="grow" value={value} onChange={(e) => setValue(e.target.value)} autoFocus />

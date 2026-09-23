@@ -1,6 +1,9 @@
 import { prisma } from "../../lib/prisma";
 import { HttpError } from "../../middleware/errorHandler";
-import { CreateCategoryInput, UpdateCategoryInput } from "../../schemas/category.schema";
+import { CreateCategoryInput, FindOrCreateCategoryInput, UpdateCategoryInput } from "../../schemas/category.schema";
+
+const DEFAULT_COLOR = "#7c3aed";
+const DEFAULT_ICON = "trending-up";
 
 export function listCategories(userId: string) {
   return prisma.category.findMany({
@@ -11,6 +14,14 @@ export function listCategories(userId: string) {
 
 export function createCategory(userId: string, input: CreateCategoryInput) {
   return prisma.category.create({ data: { ...input, userId } });
+}
+
+export function findOrCreateCategory(userId: string, input: FindOrCreateCategoryInput) {
+  return prisma.category.upsert({
+    where: { userId_nombre_tipo: { userId, nombre: input.nombre, tipo: input.tipo } },
+    update: {},
+    create: { userId, nombre: input.nombre, tipo: input.tipo, color: DEFAULT_COLOR, icono: DEFAULT_ICON },
+  });
 }
 
 async function assertOwnedCategory(userId: string, categoryId: string) {

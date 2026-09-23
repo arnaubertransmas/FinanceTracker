@@ -14,7 +14,8 @@ export const upsertSnapshotSchema = z.object({
 export type UpsertSnapshotInput = z.infer<typeof upsertSnapshotSchema>;
 
 export const updateSnapshotSchema = z.object({
-  value: z.coerce.number().nonnegative(),
+  date: dateOnly.optional(),
+  value: z.coerce.number().nonnegative().optional(),
 });
 
 export type UpdateSnapshotInput = z.infer<typeof updateSnapshotSchema>;

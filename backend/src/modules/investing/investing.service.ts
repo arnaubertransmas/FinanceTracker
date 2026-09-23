@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { HttpError } from "../../middleware/errorHandler";
 import { parseDateOnly, toDateOnlyString } from "../../lib/dates";
-import { UpsertSnapshotInput } from "../../schemas/investing.schema";
+import { UpdateSnapshotInput, UpsertSnapshotInput } from "../../schemas/investing.schema";
 
 const ZERO = new Prisma.Decimal(0);
 
@@ -73,8 +73,14 @@ export async function upsertSnapshot(userId: string, input: UpsertSnapshotInput)
   });
 }
 
-export async function updateSnapshot(userId: string, id: string, value: number) {
-  const { count } = await prisma.portfolioSnapshot.updateMany({ where: { id, userId }, data: { value } });
+export async function updateSnapshot(userId: string, id: string, input: UpdateSnapshotInput) {
+  const { count } = await prisma.portfolioSnapshot.updateMany({
+    where: { id, userId },
+    data: {
+      ...(input.value !== undefined ? { value: input.value } : {}),
+      ...(input.date !== undefined ? { date: parseDateOnly(input.date) } : {}),
+    },
+  });
   if (count === 0) {
     throw new HttpError(404, "Snapshot not found");
   }

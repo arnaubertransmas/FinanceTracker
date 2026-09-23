@@ -17,7 +17,7 @@ export async function upsert(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  const snapshot = await investingService.updateSnapshot(req.userId!, req.params.id, req.body.value);
+  const snapshot = await investingService.updateSnapshot(req.userId!, req.params.id, req.body);
   res.json({ snapshot });
 }
 
