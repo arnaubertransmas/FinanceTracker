@@ -6,6 +6,7 @@ import { useBudgets, useBudgetsProgress, useDeleteBudget, useUpdateBudget } from
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
 import { AddModal } from "@/components/add/AddModal";
 import type { Budget } from "@/schemas/budget.schema";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const STATUS_BAR_CLASS: Record<string, string> = {
   ok: "progress-success",
@@ -14,6 +15,7 @@ const STATUS_BAR_CLASS: Record<string, string> = {
 };
 
 function EditBudgetForm({ budget, onCancel, onSaved }: { budget: Budget; onCancel: () => void; onSaved: () => void }) {
+  const { t } = useLanguage();
   const updateBudget = useUpdateBudget();
   const [limitType, setLimitType] = useState<"FIXED" | "PERCENTAGE">(budget.limitType);
   const [monthlyLimit, setMonthlyLimit] = useState(budget.monthlyLimit ?? "");
@@ -49,8 +51,8 @@ function EditBudgetForm({ budget, onCancel, onSaved }: { budget: Budget; onCance
           value={limitType}
           onChange={(e) => setLimitType(e.target.value as "FIXED" | "PERCENTAGE")}
         >
-          <option value="FIXED">Fixed amount</option>
-          <option value="PERCENTAGE">% of income</option>
+          <option value="FIXED">{t("budgets.fixedAmount")}</option>
+          <option value="PERCENTAGE">{t("budgets.percentOfIncome")}</option>
         </select>
         {limitType === "FIXED" ? (
           <label className="input input-sm w-32">
@@ -82,10 +84,10 @@ function EditBudgetForm({ budget, onCancel, onSaved }: { budget: Budget; onCance
       {error && <span className="text-error text-xs">{error}</span>}
       <div className="flex gap-2 justify-end">
         <button type="button" className="btn btn-sm btn-ghost" onClick={onCancel}>
-          Cancel
+          {t("common.cancel")}
         </button>
         <button type="button" className="btn btn-sm btn-primary" onClick={handleSave} disabled={updateBudget.isPending}>
-          Save
+          {t("common.save")}
         </button>
       </div>
     </li>
@@ -93,6 +95,7 @@ function EditBudgetForm({ budget, onCancel, onSaved }: { budget: Budget; onCance
 }
 
 export default function BudgetsPage() {
+  const { t } = useLanguage();
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
@@ -108,22 +111,22 @@ export default function BudgetsPage() {
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Budgets</h1>
+        <h1 className="text-xl font-semibold">{t("budgets.title")}</h1>
         <button type="button" className="btn btn-primary btn-sm gap-1.5" onClick={() => setIsAddOpen(true)}>
           <Plus size={16} />
-          New budget
+          {t("budgets.newBudget")}
         </button>
       </div>
 
       <div className="card bg-base-100 shadow-sm">
         <div className="card-body">
-          <h3 className="font-semibold mb-2">This month</h3>
+          <h3 className="font-semibold mb-2">{t("budgets.thisMonth")}</h3>
           {isLoading ? (
-            <p className="opacity-60">Loading...</p>
+            <p className="opacity-60">{t("common.loading")}</p>
           ) : budgets.length === 0 ? (
             <div className="flex flex-col items-center text-center gap-2 py-8 opacity-60">
               <PiggyBank size={32} />
-              <p>No budgets yet. Tap &quot;New budget&quot; to set a monthly limit for a category.</p>
+              <p>{t("budgets.noBudgetsHint")}</p>
             </div>
           ) : (
             <ul className="flex flex-col gap-4">
@@ -149,7 +152,7 @@ export default function BudgetsPage() {
                         {budget.category.nombre}
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm opacity-70">
+                        <span className="text-base opacity-70">
                           €{budget.spent} / €{budget.limit} ({Number(budget.percentUsed).toFixed(0)}%)
                         </span>
                         <button
@@ -176,7 +179,7 @@ export default function BudgetsPage() {
                       max={100}
                     />
                     {budget.status === "danger" && (
-                      <span className="text-error text-xs font-semibold">Over budget!</span>
+                      <span className="text-error text-xs font-semibold">{t("budgets.overBudget")}</span>
                     )}
                   </li>
                 );

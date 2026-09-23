@@ -3,23 +3,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ArrowLeftRight, PiggyBank, Tags, Plus } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, PiggyBank, TrendingUp, Plus } from "lucide-react";
 import { AddModal, type AddTab } from "@/components/add/AddModal";
-
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { href: "/activities", label: "Activity", icon: ArrowLeftRight },
-];
-
-const RIGHT_NAV_ITEMS = [
-  { href: "/budgets", label: "Budgets", icon: PiggyBank },
-  { href: "/categories", label: "Categories", icon: Tags },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function BottomDock() {
   const pathname = usePathname();
+  const { t } = useLanguage();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [addTab, setAddTab] = useState<AddTab>("transaction");
+
+  const NAV_ITEMS = [
+    { href: "/dashboard", label: t("nav.home"), icon: LayoutDashboard },
+    { href: "/activities", label: t("nav.activity"), icon: ArrowLeftRight },
+  ];
+
+  const RIGHT_NAV_ITEMS = [
+    { href: "/budgets", label: t("nav.budgets"), icon: PiggyBank },
+    { href: "/investing", label: t("nav.investing"), icon: TrendingUp },
+  ];
 
   function openAdd(tab: AddTab) {
     setAddTab(tab);

@@ -6,12 +6,7 @@ import { useCategories, useCreateCategory, useDeleteCategory, useUpdateCategory 
 import { Category, TransactionType } from "@/schemas/category.schema";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
 import { IconPicker } from "@/components/ui/IconPicker";
-
-const TYPE_LABELS: Record<TransactionType, string> = {
-  INCOME: "Income",
-  EXPENSE: "Expenses",
-  INVESTMENT: "Investments",
-};
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const DEFAULT_COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#2563eb", "#7c3aed", "#ec4899"];
 
@@ -24,6 +19,7 @@ function EditCategoryForm({
   onCancel: () => void;
   onSaved: () => void;
 }) {
+  const { t } = useLanguage();
   const updateCategory = useUpdateCategory();
   const [nombre, setNombre] = useState(category.nombre);
   const [color, setColor] = useState(category.color);
@@ -65,10 +61,10 @@ function EditCategoryForm({
       {error && <span className="text-error text-xs">{error}</span>}
       <div className="flex gap-2 justify-end">
         <button type="button" className="btn btn-sm btn-ghost" onClick={onCancel}>
-          Cancel
+          {t("common.cancel")}
         </button>
         <button type="button" className="btn btn-sm btn-primary" onClick={handleSave} disabled={updateCategory.isPending}>
-          Save
+          {t("common.save")}
         </button>
       </div>
     </li>
@@ -76,6 +72,12 @@ function EditCategoryForm({
 }
 
 export default function CategoriesPage() {
+  const { t } = useLanguage();
+  const TYPE_LABELS: Record<TransactionType, string> = {
+    INCOME: t("categories.income"),
+    EXPENSE: t("categories.expenses"),
+    INVESTMENT: t("categories.investments"),
+  };
   const { data: categories = [], isLoading } = useCategories();
   const createCategory = useCreateCategory();
   const deleteCategory = useDeleteCategory();
@@ -115,13 +117,13 @@ export default function CategoriesPage() {
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
       <div className="card bg-base-100 shadow-sm">
         <div className="card-body">
-          <h2 className="card-title">New category</h2>
+          <h2 className="card-title">{t("categories.newCategory")}</h2>
           <form onSubmit={handleCreate} className="flex flex-col gap-3">
             <div className="flex gap-3 items-center">
               <CategoryIcon icono={icono} color={color} size="lg" />
               <input
                 className="input flex-1"
-                placeholder="Name"
+                placeholder={t("categories.name")}
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
               />
@@ -147,7 +149,7 @@ export default function CategoriesPage() {
             </div>
             <IconPicker value={icono} onChange={setIcono} color={color} />
             <button type="submit" className="btn btn-primary self-end" disabled={createCategory.isPending}>
-              Add category
+              {t("categories.addCategory")}
             </button>
           </form>
           {error && (
@@ -159,7 +161,7 @@ export default function CategoriesPage() {
       </div>
 
       {isLoading ? (
-        <p className="opacity-60">Loading...</p>
+        <p className="opacity-60">{t("common.loading")}</p>
       ) : (
         (Object.keys(TYPE_LABELS) as TransactionType[]).map((type) => {
           const items = categories.filter((c) => c.tipo === type);

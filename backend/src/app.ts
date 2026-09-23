@@ -12,6 +12,7 @@ import { budgetsRouter } from "./modules/budgets/budgets.routes";
 import { csvImportRouter } from "./modules/csv-import/csv-import.routes";
 import { dashboardRouter } from "./modules/dashboard/dashboard.routes";
 import { usersRouter } from "./modules/users/users.routes";
+import { investingRouter } from "./modules/investing/investing.routes";
 
 export function createApp() {
   const app = express();
@@ -31,6 +32,7 @@ export function createApp() {
   app.use("/api/import", csvImportRouter);
   app.use("/api/dashboard", dashboardRouter);
   app.use("/api/users", usersRouter);
+  app.use("/api/investing", investingRouter);
 
   app.use(errorHandler);
 

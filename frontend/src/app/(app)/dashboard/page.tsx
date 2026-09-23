@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { Tags } from "lucide-react";
 import { useBudgetsProgress } from "@/hooks/useBudgets";
 import { useAvailableYears, useDashboardSummary } from "@/hooks/useDashboard";
 import { CleanMoneyCard } from "@/components/dashboard/CleanMoneyCard";
 import { InsightsCard } from "@/components/dashboard/InsightsCard";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const STATUS_BAR_CLASS: Record<string, string> = {
   ok: "progress-success",
@@ -13,10 +16,10 @@ const STATUS_BAR_CLASS: Record<string, string> = {
   danger: "progress-error",
 };
 
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+const MONTH_NAMES = {
+  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+  ca: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"],
+};
 
 function pickDefaultMonth(year: number) {
   const now = new Date();
@@ -27,6 +30,8 @@ const CURRENT_YEAR = new Date().getFullYear();
 
 export default function DashboardPage() {
   const now = new Date();
+  const { t, language } = useLanguage();
+  const monthNames = MONTH_NAMES[language];
   const { data: availableYears } = useAvailableYears();
 
   const years = useMemo(() => {
@@ -56,6 +61,13 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-6">
+      <div className="flex justify-end">
+        <Link href="/categories" className="btn btn-ghost btn-sm gap-1.5">
+          <Tags size={15} />
+          {t("dashboard.editCategories")}
+        </Link>
+      </div>
+
       <div className="flex items-center gap-3 flex-wrap">
         <div className="join">
           <button
@@ -63,20 +75,20 @@ export default function DashboardPage() {
             className={`join-item btn btn-sm ${view === "month" ? "btn-primary" : "btn-ghost bg-base-200"}`}
             onClick={() => setView("month")}
           >
-            Month
+            {t("dashboard.month")}
           </button>
           <button
             type="button"
             className={`join-item btn btn-sm ${view === "year" ? "btn-primary" : "btn-ghost bg-base-200"}`}
             onClick={() => setView("year")}
           >
-            Year
+            {t("dashboard.year")}
           </button>
         </div>
 
         {view === "month" && (
           <select className="select select-sm" value={month} onChange={(e) => setMonth(Number(e.target.value))}>
-            {MONTH_NAMES.map((name, i) => (
+            {monthNames.map((name, i) => (
               <option key={name} value={i + 1}>
                 {name}
               </option>
@@ -101,7 +113,7 @@ export default function DashboardPage() {
       </div>
 
       {summaryLoading || !summary ? (
-        <p className="opacity-60">Loading...</p>
+        <p className="opacity-60">{t("common.loading")}</p>
       ) : (
         <>
           <CleanMoneyCard amount={Number(summary.cleanMoney)} />
@@ -112,14 +124,14 @@ export default function DashboardPage() {
       {view === "month" && (
         <div className="card bg-base-100 shadow-sm">
           <div className="card-body">
-            <h3 className="card-title text-base">Budgets</h3>
+            <h3 className="card-title text-base">{t("dashboard.budgetsTitle")}</h3>
             {budgets.length === 0 ? (
-              <p className="opacity-60 text-sm">No budgets yet.</p>
+              <p className="opacity-60 text-sm">{t("dashboard.noBudgets")}</p>
             ) : (
               <ul className="flex flex-col gap-3">
                 {budgets.map((budget) => (
                   <li key={budget.id} className="flex flex-col gap-1">
-                    <div className="flex justify-between text-sm items-center">
+                    <div className="flex justify-between text-base items-center">
                       <span className="flex items-center gap-2">
                         <CategoryIcon icono={budget.category.icono} color={budget.category.color} size="sm" />
                         {budget.category.nombre}

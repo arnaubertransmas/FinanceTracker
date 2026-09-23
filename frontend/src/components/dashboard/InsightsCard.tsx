@@ -5,16 +5,9 @@ import { AlertTriangle, Wallet, PiggyBank, ArrowUpCircle, ArrowDownCircle, Trend
 import { Cell, Pie, PieChart, PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useCategoryBreakdown } from "@/hooks/useDashboard";
 import { DashboardSummary } from "@/schemas/dashboard.schema";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 type InsightTab = "total" | "savings" | "income" | "spending" | "investing";
-
-const TABS: { key: InsightTab; label: string; icon: typeof PiggyBank }[] = [
-  { key: "total", label: "Total income", icon: Wallet },
-  { key: "savings", label: "Savings rate", icon: PiggyBank },
-  { key: "income", label: "Income", icon: ArrowUpCircle },
-  { key: "spending", label: "Spending", icon: ArrowDownCircle },
-  { key: "investing", label: "Investing", icon: TrendingUp },
-];
 
 const INCOME_SHADES = ["#16a34a", "#22c55e", "#4ade80", "#86efac", "#bbf7d0"];
 const INVEST_SHADES = ["#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"];
@@ -30,13 +23,13 @@ function SavingsRing({ percent }: { percent: number }) {
   const data = [{ value: Math.abs(clamped), fill: color }];
 
   return (
-    <div className="relative w-36 h-36 shrink-0">
-      <RadialBarChart width={144} height={144} innerRadius="70%" outerRadius="100%" data={data} startAngle={90} endAngle={-270}>
+    <div className="relative w-40 h-40 shrink-0">
+      <RadialBarChart width={160} height={160} innerRadius="70%" outerRadius="100%" data={data} startAngle={90} endAngle={-270}>
         <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
         <RadialBar dataKey="value" cornerRadius={8} background={{ fill: "var(--color-base-200)" }} />
       </RadialBarChart>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-3xl font-bold">{percent.toFixed(0)}%</span>
+        <span className="text-4xl font-bold">{percent.toFixed(0)}%</span>
       </div>
     </div>
   );
@@ -49,6 +42,7 @@ function CategoryPie({
   data: { nombre: string; color: string; total: string }[];
   shades?: string[];
 }) {
+  const { t } = useLanguage();
   const chartData = data.map((d, i) => ({
     name: d.nombre,
     value: Number(d.total),
@@ -56,11 +50,11 @@ function CategoryPie({
   }));
 
   if (chartData.length === 0) {
-    return <div className="w-36 h-36 shrink-0 flex items-center justify-center text-xs opacity-50">No data</div>;
+    return <div className="w-40 h-40 shrink-0 flex items-center justify-center text-xs opacity-50">{t("common.noData")}</div>;
   }
 
   return (
-    <div className="w-36 h-36 shrink-0">
+    <div className="w-40 h-40 shrink-0">
       <ResponsiveContainer>
         <PieChart>
           <Pie data={chartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="100%" paddingAngle={2}>
@@ -79,6 +73,7 @@ function CategoryPie({
 }
 
 function AllocationPie({ income, expense, invested }: { income: number; expense: number; invested: number }) {
+  const { t } = useLanguage();
   const savings = Math.max(income - expense - invested, 0);
   const total = savings + invested + expense;
 
@@ -89,11 +84,11 @@ function AllocationPie({ income, expense, invested }: { income: number; expense:
   ].filter((d) => d.value > 0);
 
   if (total === 0) {
-    return <div className="w-36 h-36 shrink-0 flex items-center justify-center text-xs opacity-50">No data</div>;
+    return <div className="w-40 h-40 shrink-0 flex items-center justify-center text-xs opacity-50">{t("common.noData")}</div>;
   }
 
   return (
-    <div className="w-36 h-36 shrink-0">
+    <div className="w-40 h-40 shrink-0">
       <ResponsiveContainer>
         <PieChart>
           <Pie data={data} dataKey="value" nameKey="name" innerRadius="55%" outerRadius="100%" paddingAngle={2}>
@@ -120,16 +115,25 @@ export function InsightsCard({
   month?: number;
   summary?: DashboardSummary;
 }) {
+  const { t } = useLanguage();
   const [tab, setTab] = useState<InsightTab>("total");
   const breakdownType = tab === "income" ? "INCOME" : tab === "investing" ? "INVESTMENT" : "EXPENSE";
   const { data: breakdown = [] } = useCategoryBreakdown(year, month, breakdownType);
 
+  const TABS: { key: InsightTab; label: string; icon: typeof PiggyBank }[] = [
+    { key: "total", label: t("insights.totalIncome"), icon: Wallet },
+    { key: "savings", label: t("insights.savingsRate"), icon: PiggyBank },
+    { key: "income", label: t("insights.income"), icon: ArrowUpCircle },
+    { key: "spending", label: t("insights.spending"), icon: ArrowDownCircle },
+    { key: "investing", label: t("insights.investing"), icon: TrendingUp },
+  ];
+
   const totals: Record<InsightTab, { label: string; amount: number; color: string }> = {
-    total: { label: "Total income", amount: Number(summary?.income ?? 0), color: "text-success" },
-    savings: { label: "Saved", amount: Number(summary?.cleanMoney ?? 0), color: "text-success" },
-    income: { label: "Total income", amount: Number(summary?.income ?? 0), color: "text-success" },
-    spending: { label: "Total spent", amount: Number(summary?.expense ?? 0), color: "text-error" },
-    investing: { label: "Total invested", amount: Number(summary?.investment ?? 0), color: "text-info" },
+    total: { label: t("insights.totalIncome"), amount: Number(summary?.income ?? 0), color: "text-success" },
+    savings: { label: t("insights.saved"), amount: Number(summary?.cleanMoney ?? 0), color: "text-success" },
+    income: { label: t("insights.totalIncome"), amount: Number(summary?.income ?? 0), color: "text-success" },
+    spending: { label: t("insights.totalSpent"), amount: Number(summary?.expense ?? 0), color: "text-error" },
+    investing: { label: t("insights.totalInvested"), amount: Number(summary?.investment ?? 0), color: "text-info" },
   };
   const active = totals[tab];
   const overspent = summary ? Number(summary.expense) + Number(summary.investment) - Number(summary.income) : 0;
@@ -166,16 +170,16 @@ export function InsightsCard({
           )}
 
           <div>
-            <div className="text-xs uppercase tracking-wide opacity-60">{active.label}</div>
-            <div className={`text-3xl font-bold ${active.color}`}>{formatEuro(active.amount)}</div>
-            {tab === "total" && <div className="text-xs opacity-50 mt-1">Where your income goes</div>}
+            <div className="text-sm uppercase tracking-wide opacity-60">{active.label}</div>
+            <div className={`text-4xl font-bold ${active.color}`}>{formatEuro(active.amount)}</div>
+            {tab === "total" && <div className="text-xs opacity-50 mt-1">{t("insights.whereIncomeGoes")}</div>}
           </div>
         </div>
 
         {tab === "total" && overspent > 0 && (
           <div role="alert" className="alert alert-warning py-2 px-3 mt-3 text-sm">
             <AlertTriangle size={16} />
-            <span>You spent and invested {formatEuro(overspent)} more than you earned this period.</span>
+            <span>{t("insights.overspentAlert", { amount: formatEuro(overspent) })}</span>
           </div>
         )}
       </div>

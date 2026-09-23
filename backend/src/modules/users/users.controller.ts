@@ -6,6 +6,16 @@ export async function list(_req: Request, res: Response) {
   res.json({ users });
 }
 
+export async function create(req: Request, res: Response) {
+  const user = await usersService.createUser(req.body);
+  res.status(201).json({ user });
+}
+
+export async function updateRole(req: Request, res: Response) {
+  const user = await usersService.updateUserRole(req.userId!, req.params.id, req.body.role);
+  res.json({ user });
+}
+
 export async function resetPassword(req: Request, res: Response) {
   await usersService.resetUserPassword(req.params.id, req.body);
   res.status(204).send();

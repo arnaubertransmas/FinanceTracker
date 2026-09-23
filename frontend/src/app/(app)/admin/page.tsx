@@ -9,5 +9,5 @@ export default async function AdminPage() {
     redirect("/dashboard");
   }
 
-  return <AdminUsersView />;
+  return <AdminUsersView currentUserId={user.id} />;
 }
