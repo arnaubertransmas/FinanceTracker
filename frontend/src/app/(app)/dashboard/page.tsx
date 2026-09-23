@@ -61,13 +61,6 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-6">
-      <div className="flex justify-end">
-        <Link href="/categories" className="btn btn-ghost btn-sm gap-1.5">
-          <Tags size={15} />
-          {t("dashboard.editCategories")}
-        </Link>
-      </div>
-
       <div className="flex items-center gap-3 flex-wrap">
         <div className="join">
           <button
@@ -124,7 +117,13 @@ export default function DashboardPage() {
       {view === "month" && (
         <div className="card bg-base-100 shadow-sm">
           <div className="card-body">
-            <h3 className="card-title text-base">{t("dashboard.budgetsTitle")}</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="card-title text-base">{t("dashboard.budgetsTitle")}</h3>
+              <Link href="/categories" className="btn btn-ghost btn-xs gap-1.5">
+                <Tags size={13} />
+                {t("dashboard.editCategories")}
+              </Link>
+            </div>
             {budgets.length === 0 ? (
               <p className="opacity-60 text-sm">{t("dashboard.noBudgets")}</p>
             ) : (

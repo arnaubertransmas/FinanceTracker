@@ -4,7 +4,6 @@ import Link from "next/link";
 import { LayoutDashboard, ArrowLeftRight, PiggyBank, TrendingUp, Wallet, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { LogoutButton } from "./LogoutButton";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function AppHeader({ email, isAdmin }: { email: string; isAdmin: boolean }) {
   const { t } = useLanguage();
@@ -36,7 +35,6 @@ export function AppHeader({ email, isAdmin }: { email: string; isAdmin: boolean 
         </nav>
       </div>
       <div className="flex items-center gap-3">
-        <LanguageSwitcher />
         <span className="hidden sm:inline text-sm opacity-70">{email}</span>
         <LogoutButton />
       </div>
