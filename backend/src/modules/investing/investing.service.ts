@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { subDays } from "date-fns";
 import { prisma } from "../../lib/prisma";
 import { HttpError } from "../../middleware/errorHandler";
 import { parseDateOnly, toDateOnlyString } from "../../lib/dates";
@@ -43,6 +44,11 @@ export async function getInvestingSummary(userId: string) {
       portfolioValue: snapshotByDate.get(date) ?? null,
     };
   });
+
+  if (allDates.length > 0) {
+    const zeroDate = toDateOnlyString(subDays(parseDateOnly(allDates[0]), 1));
+    series.unshift({ date: zeroDate, invested: ZERO, portfolioValue: null });
+  }
 
   const lastSnapshot = snapshots.at(-1);
   const latestPortfolioValue = lastSnapshot?.value ?? null;

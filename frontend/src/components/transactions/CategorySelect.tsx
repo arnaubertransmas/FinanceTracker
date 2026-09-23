@@ -5,9 +5,10 @@ import { useCategories, useCreateCategory } from "@/hooks/useCategories";
 import { TransactionType } from "@/schemas/category.schema";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
 import { IconPicker } from "@/components/ui/IconPicker";
+import { RainbowColorInput } from "@/components/ui/RainbowColorInput";
 
 const NEW_CATEGORY_VALUE = "__new__";
-const DEFAULT_COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#2563eb", "#7c3aed", "#ec4899"];
+const DEFAULT_COLORS = ["#fca5a5", "#fdba74", "#fcd34d", "#86efac", "#93c5fd", "#c4b5fd", "#f9a8d4"];
 
 export function CategorySelect({
   type,
@@ -62,7 +63,7 @@ export function CategorySelect({
             autoFocus
           />
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex gap-1.5 items-center">
           {DEFAULT_COLORS.map((c) => (
             <button
               key={c}
@@ -73,6 +74,7 @@ export function CategorySelect({
               onClick={() => setNewColor(c)}
             />
           ))}
+          <RainbowColorInput value={newColor} onChange={setNewColor} label="Custom color" size="w-6 h-6" />
         </div>
         <IconPicker value={newIcon} onChange={setNewIcon} color={newColor} />
         <div className="flex gap-2 justify-end">

@@ -2,7 +2,7 @@ import { prisma } from "../../lib/prisma";
 import { HttpError } from "../../middleware/errorHandler";
 import { CreateCategoryInput, FindOrCreateCategoryInput, UpdateCategoryInput } from "../../schemas/category.schema";
 
-const DEFAULT_COLOR = "#7c3aed";
+const DEFAULT_COLOR = "#a78bfa";
 const DEFAULT_ICON = "trending-up";
 
 export function listCategories(userId: string) {

@@ -31,7 +31,7 @@ export function CsvUploadDropzone({ onFileSelected, disabled }: { onFileSelected
     >
       <UploadCloud size={28} className="mx-auto mb-2 opacity-50" />
       <p className="font-medium">Drag your CSV here, or click to browse</p>
-      <p className="text-sm opacity-60 mt-1">Columns: date, type, category, amount, description, asset</p>
+      <p className="text-sm opacity-60 mt-1">Columns: date, type, category, amount, description</p>
       <input
         ref={inputRef}
         type="file"

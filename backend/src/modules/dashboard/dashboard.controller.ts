@@ -3,8 +3,8 @@ import { TransactionType } from "@prisma/client";
 import * as dashboardService from "./dashboard.service";
 
 export async function summary(req: Request, res: Response) {
-  const { month, year } = req.query as unknown as { month?: number; year: number };
-  const data = await dashboardService.getSummary(req.userId!, Number(year), month ? Number(month) : undefined);
+  const { month, year } = req.query as unknown as { month?: number; year?: number };
+  const data = await dashboardService.getSummary(req.userId!, year, month);
   res.json(data);
 }
 
@@ -15,17 +15,17 @@ export async function monthlyBreakdown(req: Request, res: Response) {
 }
 
 export async function categoryBreakdown(req: Request, res: Response) {
-  const { month, year, type } = req.query as unknown as { month?: number; year: number; type?: TransactionType };
-  const categories = await dashboardService.getCategoryBreakdown(
-    req.userId!,
-    Number(year),
-    month ? Number(month) : undefined,
-    type
-  );
+  const { month, year, type } = req.query as unknown as { month?: number; year?: number; type?: TransactionType };
+  const categories = await dashboardService.getCategoryBreakdown(req.userId!, year, month, type);
   res.json({ categories });
 }
 
 export async function availableYears(req: Request, res: Response) {
   const years = await dashboardService.getAvailableYears(req.userId!);
   res.json({ years });
+}
+
+export async function history(req: Request, res: Response) {
+  const data = await dashboardService.getHistory(req.userId!);
+  res.json(data);
 }

@@ -12,7 +12,7 @@ export const translations = {
     "nav.home": "Home",
     "nav.activity": "Activity",
     "nav.budgets": "Budgets",
-    "nav.investing": "Investing",
+    "nav.wealth": "Wealth",
     "nav.admin": "Admin",
 
     "login.subtitle": "Sign in to manage your money",
@@ -26,6 +26,7 @@ export const translations = {
 
     "dashboard.month": "Month",
     "dashboard.year": "Year",
+    "dashboard.all": "All",
     "dashboard.editCategories": "Edit categories",
     "dashboard.wealth": "Wealth",
     "dashboard.wealthHint": "Income − expenses (investing doesn't count against you)",
@@ -33,6 +34,7 @@ export const translations = {
     "dashboard.budgetsTitle": "Budgets",
     "dashboard.noBudgets": "No budgets yet.",
 
+    "insights.overview": "Overview",
     "insights.totalIncome": "Total income",
     "insights.savingsRate": "Savings rate",
     "insights.income": "Income",
@@ -52,6 +54,7 @@ export const translations = {
     "activities.expenses": "Expenses",
     "activities.investments": "Investments",
     "activities.recurring": "recurring",
+    "activities.searchPlaceholder": "Search",
 
     "budgets.title": "Budgets",
     "budgets.newBudget": "New budget",
@@ -68,6 +71,7 @@ export const translations = {
     "categories.income": "Income",
     "categories.expenses": "Expenses",
     "categories.investments": "Investments",
+    "categories.customColor": "Custom color",
 
     "investing.title": "Investing",
     "investing.totalInvested": "Total invested",
@@ -82,6 +86,8 @@ export const translations = {
     "admin.create": "Create",
     "admin.roleUser": "User",
     "admin.roleAdmin": "Admin",
+
+    "wealth.empty": "Log some transactions to see your wealth trend over time.",
   },
   ca: {
     "common.save": "Desar",
@@ -96,7 +102,7 @@ export const translations = {
     "nav.home": "Inici",
     "nav.activity": "Activitat",
     "nav.budgets": "Pressupostos",
-    "nav.investing": "Inversió",
+    "nav.wealth": "Patrimoni",
     "nav.admin": "Administració",
 
     "login.subtitle": "Inicia sessió per gestionar els teus diners",
@@ -110,6 +116,7 @@ export const translations = {
 
     "dashboard.month": "Mes",
     "dashboard.year": "Any",
+    "dashboard.all": "Tot",
     "dashboard.editCategories": "Edita categories",
     "dashboard.wealth": "Patrimoni",
     "dashboard.wealthHint": "Ingressos − despeses (invertir no compta en contra)",
@@ -117,6 +124,7 @@ export const translations = {
     "dashboard.budgetsTitle": "Pressupostos",
     "dashboard.noBudgets": "Encara no hi ha pressupostos.",
 
+    "insights.overview": "Visió general",
     "insights.totalIncome": "Ingressos totals",
     "insights.savingsRate": "Taxa d'estalvi",
     "insights.income": "Ingressos",
@@ -136,6 +144,7 @@ export const translations = {
     "activities.expenses": "Despeses",
     "activities.investments": "Inversions",
     "activities.recurring": "recurrent",
+    "activities.searchPlaceholder": "Cerca",
 
     "budgets.title": "Pressupostos",
     "budgets.newBudget": "Nou pressupost",
@@ -152,6 +161,7 @@ export const translations = {
     "categories.income": "Ingressos",
     "categories.expenses": "Despeses",
     "categories.investments": "Inversions",
+    "categories.customColor": "Color personalitzat",
 
     "investing.title": "Inversió",
     "investing.totalInvested": "Total invertit",
@@ -166,6 +176,8 @@ export const translations = {
     "admin.create": "Crea",
     "admin.roleUser": "Usuari",
     "admin.roleAdmin": "Administrador",
+
+    "wealth.empty": "Registra algunes transaccions per veure l'evolució del teu patrimoni.",
   },
 } as const;
 

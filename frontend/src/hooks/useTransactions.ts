@@ -7,6 +7,7 @@ export interface TransactionFilters {
   categoryId?: string;
   from?: string;
   to?: string;
+  search?: string;
   page?: number;
 }
 
@@ -16,6 +17,7 @@ function buildQuery(filters: TransactionFilters) {
   if (filters.categoryId) params.set("categoryId", filters.categoryId);
   if (filters.from) params.set("from", filters.from);
   if (filters.to) params.set("to", filters.to);
+  if (filters.search) params.set("search", filters.search);
   if (filters.page) params.set("page", String(filters.page));
   const qs = params.toString();
   return qs ? `?${qs}` : "";

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeftRight, Download, Pencil, Repeat, Trash2, Upload } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeftRight, Download, Pencil, Repeat, Search, Trash2, Upload } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
 import { useDeleteTransaction, useTransactions, useUpdateTransaction } from "@/hooks/useTransactions";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
@@ -93,7 +93,14 @@ export default function TransactionsPage() {
   const [categoryId, setCategoryId] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setSearch(searchInput.trim()), 300);
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
 
   const { data: categories = [] } = useCategories();
   const { data, isLoading } = useTransactions({
@@ -101,6 +108,7 @@ export default function TransactionsPage() {
     categoryId: categoryId || undefined,
     from: from || undefined,
     to: to || undefined,
+    search: search || undefined,
   });
   const deleteTransaction = useDeleteTransaction();
 
@@ -111,7 +119,7 @@ export default function TransactionsPage() {
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t("activities.title")}</h1>
+        <h1 className="text-3xl font-semibold">{t("activities.title")}</h1>
         <div className="flex gap-1">
           <a href="/import" className="btn btn-ghost btn-sm btn-circle" title="Import CSV" aria-label="Import CSV">
             <Upload size={16} />
@@ -129,6 +137,16 @@ export default function TransactionsPage() {
 
       <div className="card bg-base-100 shadow-sm">
         <div className="card-body flex-row flex-wrap gap-3 items-center py-4">
+          <label className="input input-sm">
+            <Search size={14} className="opacity-60" />
+            <input
+              type="text"
+              placeholder={t("activities.searchPlaceholder")}
+              className="grow"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </label>
           <select className="select select-sm" value={type} onChange={(e) => setType(e.target.value)}>
             <option value="">{t("activities.allTypes")}</option>
             <option value="INCOME">{t("activities.income")}</option>

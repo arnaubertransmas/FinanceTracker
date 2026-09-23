@@ -9,16 +9,12 @@ import { CleanMoneyCard } from "@/components/dashboard/CleanMoneyCard";
 import { InsightsCard } from "@/components/dashboard/InsightsCard";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { MONTH_NAMES } from "@/lib/monthNames";
 
 const STATUS_BAR_CLASS: Record<string, string> = {
   ok: "progress-success",
   warning: "progress-warning",
   danger: "progress-error",
-};
-
-const MONTH_NAMES = {
-  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-  ca: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"],
 };
 
 function pickDefaultMonth(year: number) {
@@ -39,7 +35,7 @@ export default function DashboardPage() {
     return availableYears;
   }, [availableYears]);
 
-  const [view, setView] = useState<"month" | "year">("month");
+  const [view, setView] = useState<"month" | "year" | "all">("month");
   const [year, setYear] = useState(now.getFullYear());
   const [month, setMonth] = useState(now.getMonth() + 1);
 
@@ -49,9 +45,10 @@ export default function DashboardPage() {
     }
   }, [availableYears, year]);
 
+  const activeYear = view === "all" ? undefined : year;
   const activeMonth = view === "month" ? month : undefined;
 
-  const { data: summary, isLoading: summaryLoading } = useDashboardSummary(year, activeMonth);
+  const { data: summary, isLoading: summaryLoading } = useDashboardSummary(activeYear, activeMonth);
   const { data: budgets = [] } = useBudgetsProgress(month, year);
 
   function handleYearChange(newYear: number) {
@@ -77,6 +74,13 @@ export default function DashboardPage() {
           >
             {t("dashboard.year")}
           </button>
+          <button
+            type="button"
+            className={`join-item btn btn-sm ${view === "all" ? "btn-primary" : "btn-ghost bg-base-200"}`}
+            onClick={() => setView("all")}
+          >
+            {t("dashboard.all")}
+          </button>
         </div>
 
         {view === "month" && (
@@ -89,7 +93,7 @@ export default function DashboardPage() {
           </select>
         )}
 
-        {years.length > 1 && (
+        {view !== "all" && years.length > 1 && (
           <div className="flex gap-2 ml-auto">
             {years.map((y) => (
               <button
@@ -110,7 +114,7 @@ export default function DashboardPage() {
       ) : (
         <>
           <CleanMoneyCard amount={Number(summary.cleanMoney)} />
-          <InsightsCard year={year} month={activeMonth} summary={summary} />
+          <InsightsCard year={activeYear} month={activeMonth} summary={summary} />
         </>
       )}
 

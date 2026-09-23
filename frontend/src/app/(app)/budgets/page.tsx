@@ -111,7 +111,7 @@ export default function BudgetsPage() {
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{t("budgets.title")}</h1>
+        <h1 className="text-3xl font-semibold">{t("budgets.title")}</h1>
         <button type="button" className="btn btn-primary btn-sm gap-1.5" onClick={() => setIsAddOpen(true)}>
           <Plus size={16} />
           {t("budgets.newBudget")}

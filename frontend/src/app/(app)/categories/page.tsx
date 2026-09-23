@@ -6,9 +6,10 @@ import { useCategories, useCreateCategory, useDeleteCategory, useUpdateCategory 
 import { Category, TransactionType } from "@/schemas/category.schema";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
 import { IconPicker } from "@/components/ui/IconPicker";
+import { RainbowColorInput } from "@/components/ui/RainbowColorInput";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const DEFAULT_COLORS = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#2563eb", "#7c3aed", "#ec4899"];
+const DEFAULT_COLORS = ["#fca5a5", "#fdba74", "#fcd34d", "#86efac", "#93c5fd", "#c4b5fd", "#f9a8d4"];
 
 function EditCategoryForm({
   category,
@@ -45,7 +46,7 @@ function EditCategoryForm({
         <CategoryIcon icono={icono} color={color} />
         <input className="input input-sm flex-1" value={nombre} onChange={(e) => setNombre(e.target.value)} autoFocus />
       </div>
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5 items-center">
         {DEFAULT_COLORS.map((c) => (
           <button
             key={c}
@@ -56,6 +57,7 @@ function EditCategoryForm({
             onClick={() => setColor(c)}
           />
         ))}
+        <RainbowColorInput value={color} onChange={setColor} label={t("categories.customColor")} size="w-6 h-6" />
       </div>
       <IconPicker value={icono} onChange={setIcono} color={color} />
       {error && <span className="text-error text-xs">{error}</span>}
@@ -135,7 +137,7 @@ export default function CategoriesPage() {
                 ))}
               </select>
             </div>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1.5 items-center">
               {DEFAULT_COLORS.map((c) => (
                 <button
                   key={c}
@@ -146,6 +148,7 @@ export default function CategoriesPage() {
                   onClick={() => setColor(c)}
                 />
               ))}
+              <RainbowColorInput value={color} onChange={setColor} label={t("categories.customColor")} />
             </div>
             <IconPicker value={icono} onChange={setIcono} color={color} />
             <button type="submit" className="btn btn-primary self-end" disabled={createCategory.isPending}>

@@ -37,6 +37,7 @@ export const listTransactionsQuerySchema = z.object({
   categoryId: z.string().uuid().optional(),
   from: dateOnly.optional(),
   to: dateOnly.optional(),
+  search: z.string().min(1).max(280).optional(),
   page: z.coerce.number().int().positive().optional().default(1),
   pageSize: z.coerce.number().int().positive().max(200).optional().default(50),
 });

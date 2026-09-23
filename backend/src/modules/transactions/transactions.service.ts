@@ -80,6 +80,14 @@ export async function listTransactions(userId: string, query: ListTransactionsQu
           },
         }
       : {}),
+    ...(query.search
+      ? {
+          OR: [
+            { description: { contains: query.search, mode: "insensitive" as const } },
+            { category: { nombre: { contains: query.search, mode: "insensitive" as const } } },
+          ],
+        }
+      : {}),
   };
 
   const [items, total] = await Promise.all([

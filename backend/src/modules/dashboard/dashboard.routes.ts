@@ -21,3 +21,4 @@ dashboardRouter.get(
   asyncHandler(dashboardController.categoryBreakdown)
 );
 dashboardRouter.get("/available-years", asyncHandler(dashboardController.availableYears));
+dashboardRouter.get("/history", asyncHandler(dashboardController.history));

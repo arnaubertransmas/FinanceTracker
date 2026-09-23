@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ArrowLeftRight, PiggyBank, TrendingUp, Plus } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, PiggyBank, Wallet, Plus } from "lucide-react";
 import { AddModal, type AddTab } from "@/components/add/AddModal";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -20,7 +20,7 @@ export function BottomDock() {
 
   const RIGHT_NAV_ITEMS = [
     { href: "/budgets", label: t("nav.budgets"), icon: PiggyBank },
-    { href: "/investing", label: t("nav.investing"), icon: TrendingUp },
+    { href: "/wealth", label: t("nav.wealth"), icon: Wallet },
   ];
 
   function openAdd(tab: AddTab) {

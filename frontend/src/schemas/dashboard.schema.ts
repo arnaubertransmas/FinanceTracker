@@ -1,6 +1,6 @@
 export interface DashboardSummary {
   month: number | null;
-  year: number;
+  year: number | null;
   income: string;
   expense: string;
   investment: string;
@@ -14,4 +14,13 @@ export interface CategoryBreakdownItem {
   color: string;
   total: string;
   percent: string;
+}
+
+export interface HistoryPoint {
+  month: string;
+  income: string;
+  expense: string;
+  investment: string;
+  wealth: string;
+  savingsPercent: string;
 }
