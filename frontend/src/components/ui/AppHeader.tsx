@@ -34,6 +34,11 @@ export function AppHeader({ email, isAdmin }: { email: string; isAdmin: boolean 
       </div>
       <div className="flex items-center gap-3">
         <span className="hidden sm:inline text-sm opacity-70">{email}</span>
+        {isAdmin && (
+          <Link href="/admin" className="btn btn-ghost btn-square sm:hidden" aria-label={t("nav.admin")}>
+            <ShieldCheck size={20} />
+          </Link>
+        )}
         <LogoutButton />
       </div>
     </header>
