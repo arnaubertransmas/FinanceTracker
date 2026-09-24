@@ -72,6 +72,7 @@ export const translations = {
     "categories.expenses": "Expenses",
     "categories.investments": "Investments",
     "categories.customColor": "Custom color",
+    "categories.deleteError": "Can't delete: some transactions still use this category",
 
     "investing.title": "Investing",
     "investing.totalInvested": "Total invested",
@@ -162,6 +163,7 @@ export const translations = {
     "categories.expenses": "Despeses",
     "categories.investments": "Inversions",
     "categories.customColor": "Color personalitzat",
+    "categories.deleteError": "No es pot eliminar: encara hi ha transaccions que fan servir aquesta categoria",
 
     "investing.title": "Inversió",
     "investing.totalInvested": "Total invertit",

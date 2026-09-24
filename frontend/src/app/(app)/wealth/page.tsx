@@ -33,7 +33,11 @@ function inPeriod(dateStr: string, view: PeriodView, year: number, month: number
   if (view === "all") return true;
   const [y, m] = periodKey(dateStr).split("-").map(Number);
   if (y !== year) return false;
-  return view === "year" ? true : m <= month;
+  return view === "year" ? true : m === month;
+}
+
+function periodStartKey(view: PeriodView, year: number, month: number) {
+  return view === "month" ? `${year}-${String(month).padStart(2, "0")}-01` : `${year}-01-01`;
 }
 
 function pickDefaultMonth(year: number) {
@@ -120,14 +124,29 @@ function InvestingTab({ view, year, month }: { view: PeriodView; year: number; m
     }
   }
 
-  const filtered: InvestingSeriesPoint[] = (summary?.series ?? []).filter((p) => inPeriod(p.date, view, year, month));
+  const allPoints = summary?.series ?? [];
+  const filtered: InvestingSeriesPoint[] = allPoints.filter((p) => inPeriod(p.date, view, year, month));
+
+  let baselineInvested = 0;
+  if (view !== "all") {
+    const periodStart = periodStartKey(view, year, month);
+    for (const p of allPoints) {
+      if (p.date < periodStart) baselineInvested = Number(p.invested);
+      else break;
+    }
+  }
+
   const chartData = filtered.map((point) => ({
     date: point.date,
-    invested: Number(point.invested),
+    invested: Number(point.invested) - baselineInvested,
     portfolioValue: point.portfolioValue === null ? null : Number(point.portfolioValue),
   }));
+  if (view !== "all" && chartData.length > 0 && chartData[0].invested !== 0) {
+    chartData.unshift({ date: periodStartKey(view, year, month), invested: 0, portfolioValue: null });
+  }
 
   const totalInvested = chartData.at(-1)?.invested ?? 0;
+  const lifetimeInvested = filtered.length > 0 ? Number(filtered.at(-1)!.invested) : baselineInvested;
   let latestValue: number | null = null;
   for (let i = chartData.length - 1; i >= 0; i--) {
     if (chartData[i].portfolioValue !== null) {
@@ -135,8 +154,8 @@ function InvestingTab({ view, year, month }: { view: PeriodView; year: number; m
       break;
     }
   }
-  const gainAmount = latestValue !== null ? latestValue - totalInvested : null;
-  const gainPercent = gainAmount !== null && totalInvested !== 0 ? (gainAmount / totalInvested) * 100 : null;
+  const gainAmount = latestValue !== null ? (lifetimeInvested > 0 ? latestValue - lifetimeInvested : 0) : null;
+  const gainPercent = gainAmount !== null && lifetimeInvested !== 0 ? (gainAmount / lifetimeInvested) * 100 : null;
   const gainColor = gainAmount === null ? "opacity-70" : gainAmount >= 0 ? "text-success" : "text-error";
   const lineColor = gainAmount === null ? "#a78bfa" : gainAmount >= 0 ? "#4ade80" : "#f87171";
 
@@ -158,7 +177,9 @@ function InvestingTab({ view, year, month }: { view: PeriodView; year: number; m
               <div className={`text-2xl font-bold ${gainColor}`}>
                 {gainAmount === null
                   ? "—"
-                  : `${gainAmount >= 0 ? "+" : ""}${formatEuro(gainAmount)} (${gainPercent! >= 0 ? "+" : ""}${gainPercent!.toFixed(1)}%)`}
+                  : `${gainAmount >= 0 ? "+" : ""}${formatEuro(gainAmount)}${
+                      gainPercent === null ? "" : ` (${gainPercent >= 0 ? "+" : ""}${gainPercent.toFixed(1)}%)`
+                    }`}
               </div>
             </div>
           </div>
@@ -283,7 +304,17 @@ function WealthTab({ view, year, month }: { view: PeriodView; year: number; mont
   const { data: series = [], isLoading } = useDashboardHistory();
 
   const filtered: HistoryPoint[] = series.filter((p) => inPeriod(`${p.month}-01`, view, year, month));
-  const chartData = filtered.map((point) => ({ month: point.month, value: Number(point.wealth) }));
+
+  let baselineWealth = 0;
+  if (view !== "all") {
+    const periodStart = periodStartKey(view, year, month);
+    for (const p of series) {
+      if (`${p.month}-01` < periodStart) baselineWealth = Number(p.wealth);
+      else break;
+    }
+  }
+
+  const chartData = filtered.map((point) => ({ month: point.month, value: Number(point.wealth) - baselineWealth }));
 
   const latest = chartData.at(-1)?.value ?? 0;
   const numberColor = latest >= 0 ? "text-success" : "text-error";

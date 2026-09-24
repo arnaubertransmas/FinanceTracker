@@ -90,6 +90,7 @@ export default function CategoriesPage() {
   const [icono, setIcono] = useState("tag");
   const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<{ id: string; message: string } | null>(null);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -108,10 +109,11 @@ export default function CategoriesPage() {
   }
 
   async function handleDelete(id: string) {
+    setDeleteError(null);
     try {
       await deleteCategory.mutateAsync(id);
     } catch {
-      setError("Can't delete: some transactions still use this category");
+      setDeleteError({ id, message: t("categories.deleteError") });
     }
   }
 
@@ -183,29 +185,36 @@ export default function CategoriesPage() {
                         onSaved={() => setEditingId(null)}
                       />
                     ) : (
-                      <li key={category.id} className="flex items-center justify-between gap-2 py-2">
-                        <span className="flex items-center gap-3">
-                          <CategoryIcon icono={category.icono} color={category.color} size="sm" />
-                          {category.nombre}
-                        </span>
-                        <div className="flex gap-1">
-                          <button
-                            type="button"
-                            className="btn btn-ghost btn-xs"
-                            onClick={() => setEditingId(category.id)}
-                            aria-label={`Edit ${category.nombre}`}
-                          >
-                            <Pencil size={14} />
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-ghost btn-xs text-error"
-                            onClick={() => handleDelete(category.id)}
-                            aria-label={`Delete ${category.nombre}`}
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                      <li key={category.id} className="flex flex-col gap-1 py-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="flex items-center gap-3">
+                            <CategoryIcon icono={category.icono} color={category.color} size="sm" />
+                            {category.nombre}
+                          </span>
+                          <div className="flex gap-1">
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-xs"
+                              onClick={() => setEditingId(category.id)}
+                              aria-label={`Edit ${category.nombre}`}
+                            >
+                              <Pencil size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-xs text-error"
+                              onClick={() => handleDelete(category.id)}
+                              aria-label={`Delete ${category.nombre}`}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
+                        {deleteError?.id === category.id && (
+                          <div role="alert" className="alert alert-error py-2 text-sm">
+                            <span>{deleteError.message}</span>
+                          </div>
+                        )}
                       </li>
                     )
                   )}
