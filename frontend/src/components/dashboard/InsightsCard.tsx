@@ -105,7 +105,7 @@ function AllocationPie({ income, expense, invested }: { income: number; expense:
   }
 
   return (
-    <div className="w-40 h-40 shrink-0">
+    <div className="relative w-40 h-40 shrink-0">
       <ResponsiveContainer>
         <PieChart>
           <Pie data={data} dataKey="value" nameKey="name" innerRadius="55%" outerRadius="100%" paddingAngle={2}>
@@ -126,6 +126,10 @@ function AllocationPie({ income, expense, invested }: { income: number; expense:
           />
         </PieChart>
       </ResponsiveContainer>
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+        <span className="text-[10px] uppercase tracking-wide opacity-60">{t("insights.totalIncome")}</span>
+        <span className="text-base font-bold">{formatEuro(income)}</span>
+      </div>
     </div>
   );
 }
@@ -198,7 +202,6 @@ export function InsightsCard({
           <div>
             <div className="text-sm uppercase tracking-wide opacity-60">{active.label}</div>
             <div className={`text-4xl font-bold ${active.color}`}>{formatEuro(active.amount)}</div>
-            {tab === "total" && <div className="text-xs opacity-50 mt-1">{t("insights.whereIncomeGoes")}</div>}
           </div>
         </div>
 
