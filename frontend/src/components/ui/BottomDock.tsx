@@ -42,7 +42,7 @@ export function BottomDock() {
           );
         })}
 
-        <button type="button" onClick={() => openAdd("transaction")} aria-label="Add">
+        <button type="button" onClick={() => openAdd("transaction")} aria-label={t("common.add")}>
           <span className="btn btn-primary btn-circle -mt-8 shadow-lg">
             <Plus size={24} />
           </span>
@@ -62,7 +62,7 @@ export function BottomDock() {
 
       <button
         type="button"
-        aria-label="Add"
+        aria-label={t("common.add")}
         onClick={() => openAdd("transaction")}
         className="hidden sm:inline-flex btn btn-primary btn-circle fixed bottom-6 right-6 h-16 w-16 shadow-lg z-40"
       >

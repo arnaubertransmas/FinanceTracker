@@ -36,7 +36,7 @@ function EditTransactionForm({
     setError(null);
     const parsedAmount = Number(amount);
     if (!parsedAmount || parsedAmount <= 0) {
-      setError("Amount must be greater than 0");
+      setError(t("common.amountPositive"));
       return;
     }
     try {
@@ -46,7 +46,7 @@ function EditTransactionForm({
       });
       onSaved();
     } catch {
-      setError("Could not save changes");
+      setError(t("common.couldNotSaveChanges"));
     }
   }
 
@@ -69,7 +69,7 @@ function EditTransactionForm({
       </div>
       <input
         type="text"
-        placeholder="Description (optional)"
+        placeholder={t("transactions.descriptionPlaceholder")}
         className="input input-sm w-full"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
@@ -121,14 +121,14 @@ export default function TransactionsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-semibold">{t("activities.title")}</h1>
         <div className="flex gap-1">
-          <a href="/import" className="btn btn-ghost btn-sm btn-circle" title="Import CSV" aria-label="Import CSV">
+          <a href="/import" className="btn btn-ghost btn-sm btn-circle" title={t("activities.importCsv")} aria-label={t("activities.importCsv")}>
             <Upload size={16} />
           </a>
           <a
             href={`/api/transactions/export${exportParams.toString() ? `?${exportParams.toString()}` : ""}`}
             className="btn btn-ghost btn-sm btn-circle"
-            title="Export CSV"
-            aria-label="Export CSV"
+            title={t("activities.exportCsv")}
+            aria-label={t("activities.exportCsv")}
           >
             <Download size={16} />
           </a>
@@ -210,7 +210,7 @@ export default function TransactionsPage() {
                         type="button"
                         className="btn btn-ghost btn-xs"
                         onClick={() => setEditingId(tx.id)}
-                        aria-label="Edit transaction"
+                        aria-label={t("activities.editTransaction")}
                       >
                         <Pencil size={14} />
                       </button>
@@ -218,7 +218,7 @@ export default function TransactionsPage() {
                         type="button"
                         className="btn btn-ghost btn-xs text-error"
                         onClick={() => deleteTransaction.mutate(tx.id)}
-                        aria-label="Delete transaction"
+                        aria-label={t("activities.deleteTransaction")}
                       >
                         <Trash2 size={14} />
                       </button>

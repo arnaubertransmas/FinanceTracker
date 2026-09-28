@@ -63,14 +63,14 @@ function EditSnapshotForm({
   async function handleSave() {
     const parsed = Number(value);
     if (!Number.isFinite(parsed) || parsed < 0) {
-      setError("Enter a valid amount");
+      setError(t("common.enterValidAmount"));
       return;
     }
     try {
       await updateSnapshot.mutateAsync({ id: snapshot.id, date, value: parsed });
       onSaved();
     } catch {
-      setError("Could not save changes");
+      setError(t("common.couldNotSaveChanges"));
     }
   }
 
@@ -113,14 +113,14 @@ function InvestingTab({ view, year, month }: { view: PeriodView; year: number; m
     setError(null);
     const parsed = Number(value);
     if (!Number.isFinite(parsed) || parsed < 0) {
-      setError("Enter a valid amount");
+      setError(t("common.enterValidAmount"));
       return;
     }
     try {
       await addSnapshot.mutateAsync({ date, value: parsed });
       setValue("");
     } catch {
-      setError("Could not save the portfolio value");
+      setError(t("investing.couldNotSaveValue"));
     }
   }
 
@@ -239,7 +239,7 @@ function InvestingTab({ view, year, month }: { view: PeriodView; year: number; m
             <input type="date" className="input input-sm" value={date} onChange={(e) => setDate(e.target.value)} />
             <label className="input input-sm w-32">
               <span className="opacity-60">€</span>
-              <input type="number" step="0.01" min="0" className="grow" value={value} onChange={(e) => setValue(e.target.value)} placeholder="Value" />
+              <input type="number" step="0.01" min="0" className="grow" value={value} onChange={(e) => setValue(e.target.value)} placeholder={t("investing.valuePlaceholder")} />
             </label>
             <button type="submit" className="btn btn-primary btn-sm" disabled={addSnapshot.isPending}>
               {t("common.save")}
@@ -275,7 +275,7 @@ function InvestingTab({ view, year, month }: { view: PeriodView; year: number; m
                         type="button"
                         className="btn btn-ghost btn-xs"
                         onClick={() => setEditingId(snapshot.id)}
-                        aria-label={`Edit value for ${snapshot.date.slice(0, 10)}`}
+                        aria-label={t("investing.editValueFor", { date: snapshot.date.slice(0, 10) })}
                       >
                         <Pencil size={14} />
                       </button>
@@ -283,7 +283,7 @@ function InvestingTab({ view, year, month }: { view: PeriodView; year: number; m
                         type="button"
                         className="btn btn-ghost btn-xs text-error"
                         onClick={() => deleteSnapshot.mutate(snapshot.id)}
-                        aria-label={`Delete value for ${snapshot.date.slice(0, 10)}`}
+                        aria-label={t("investing.deleteValueFor", { date: snapshot.date.slice(0, 10) })}
                       >
                         <Trash2 size={14} />
                       </button>

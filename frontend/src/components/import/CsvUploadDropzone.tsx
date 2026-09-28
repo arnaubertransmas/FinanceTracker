@@ -2,8 +2,10 @@
 
 import { useRef, useState } from "react";
 import { UploadCloud } from "lucide-react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function CsvUploadDropzone({ onFileSelected, disabled }: { onFileSelected: (file: File) => void; disabled?: boolean }) {
+  const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -30,8 +32,8 @@ export function CsvUploadDropzone({ onFileSelected, disabled }: { onFileSelected
       }}
     >
       <UploadCloud size={28} className="mx-auto mb-2 opacity-50" />
-      <p className="font-medium">Drag your CSV here, or click to browse</p>
-      <p className="text-sm opacity-60 mt-1">Columns: date, type, category, amount, description</p>
+      <p className="font-medium">{t("csvImport.dragDrop")}</p>
+      <p className="text-sm opacity-60 mt-1">{t("csvImport.columnsHint")}</p>
       <input
         ref={inputRef}
         type="file"

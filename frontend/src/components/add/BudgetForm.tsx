@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { useCategories } from "@/hooks/useCategories";
 import { useCreateBudget } from "@/hooks/useBudgets";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function BudgetForm({ onSuccess }: { onSuccess: () => void }) {
+  const { t } = useLanguage();
   const { data: categories = [] } = useCategories();
   const createBudget = useCreateBudget();
   const expenseCategories = categories.filter((c) => c.tipo === "EXPENSE");
@@ -19,7 +21,7 @@ export function BudgetForm({ onSuccess }: { onSuccess: () => void }) {
     e.preventDefault();
     setError(null);
     if (!categoryId) {
-      setError("Choose a category");
+      setError(t("budgets.chooseCategory"));
       return;
     }
     try {
@@ -31,19 +33,19 @@ export function BudgetForm({ onSuccess }: { onSuccess: () => void }) {
       });
       onSuccess();
     } catch {
-      setError("Could not create the budget (maybe one already exists for this category?)");
+      setError(t("budgets.couldNotCreate"));
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       {expenseCategories.length === 0 ? (
-        <p className="text-sm opacity-70">Create an expense category first (add an expense transaction to create one inline).</p>
+        <p className="text-sm opacity-70">{t("budgets.createCategoryFirst")}</p>
       ) : (
         <>
           <select className="select w-full" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
             <option value="" disabled>
-              Category
+              {t("budgets.categoryOption")}
             </option>
             {expenseCategories.map((c) => (
               <option key={c.id} value={c.id}>
@@ -56,8 +58,8 @@ export function BudgetForm({ onSuccess }: { onSuccess: () => void }) {
             value={limitType}
             onChange={(e) => setLimitType(e.target.value as "FIXED" | "PERCENTAGE")}
           >
-            <option value="FIXED">Fixed amount</option>
-            <option value="PERCENTAGE">% of income</option>
+            <option value="FIXED">{t("budgets.fixedAmount")}</option>
+            <option value="PERCENTAGE">{t("budgets.percentOfIncome")}</option>
           </select>
           {limitType === "FIXED" ? (
             <label className="input w-full">
@@ -66,7 +68,7 @@ export function BudgetForm({ onSuccess }: { onSuccess: () => void }) {
                 type="number"
                 step="0.01"
                 min="0"
-                placeholder="Monthly limit"
+                placeholder={t("budgets.monthlyLimitPlaceholder")}
                 className="grow"
                 value={monthlyLimit}
                 onChange={(e) => setMonthlyLimit(e.target.value)}
@@ -79,7 +81,7 @@ export function BudgetForm({ onSuccess }: { onSuccess: () => void }) {
                 step="0.1"
                 min="0"
                 max="100"
-                placeholder="% of income"
+                placeholder={t("budgets.percentOfIncome")}
                 className="grow"
                 value={percentage}
                 onChange={(e) => setPercentage(e.target.value)}
@@ -97,7 +99,7 @@ export function BudgetForm({ onSuccess }: { onSuccess: () => void }) {
       )}
 
       <button type="submit" className="btn btn-primary mt-1" disabled={createBudget.isPending || expenseCategories.length === 0}>
-        {createBudget.isPending ? "Saving..." : "Save budget"}
+        {createBudget.isPending ? t("budgets.saving") : t("budgets.saveBudget")}
       </button>
     </form>
   );

@@ -6,6 +6,7 @@ import { TransactionType } from "@/schemas/category.schema";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
 import { IconPicker } from "@/components/ui/IconPicker";
 import { RainbowColorInput } from "@/components/ui/RainbowColorInput";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const NEW_CATEGORY_VALUE = "__new__";
 const DEFAULT_COLORS = ["#fca5a5", "#fdba74", "#fcd34d", "#86efac", "#93c5fd", "#c4b5fd", "#f9a8d4"];
@@ -19,6 +20,7 @@ export function CategorySelect({
   value: string;
   onChange: (id: string) => void;
 }) {
+  const { t } = useLanguage();
   const { data: categories = [] } = useCategories();
   const createCategory = useCreateCategory();
   const [isCreating, setIsCreating] = useState(false);
@@ -57,7 +59,7 @@ export function CategorySelect({
           <CategoryIcon icono={newIcon} color={newColor} />
           <input
             className="input input-sm flex-1"
-            placeholder="Category name"
+            placeholder={t("categories.namePlaceholder")}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             autoFocus
@@ -74,12 +76,12 @@ export function CategorySelect({
               onClick={() => setNewColor(c)}
             />
           ))}
-          <RainbowColorInput value={newColor} onChange={setNewColor} label="Custom color" size="w-6 h-6" />
+          <RainbowColorInput value={newColor} onChange={setNewColor} label={t("categories.customColor")} size="w-6 h-6" />
         </div>
         <IconPicker value={newIcon} onChange={setNewIcon} color={newColor} />
         <div className="flex gap-2 justify-end">
           <button type="button" className="btn btn-sm btn-ghost" onClick={() => setIsCreating(false)}>
-            Cancel
+            {t("common.cancel")}
           </button>
           <button
             type="button"
@@ -87,7 +89,7 @@ export function CategorySelect({
             onClick={handleCreate}
             disabled={createCategory.isPending || !newName.trim()}
           >
-            Create
+            {t("common.create")}
           </button>
         </div>
       </div>
@@ -97,14 +99,14 @@ export function CategorySelect({
   return (
     <select className="select w-full" value={value} onChange={handleSelectChange}>
       <option value="" disabled>
-        Choose category
+        {t("categories.chooseCategory")}
       </option>
       {filtered.map((c) => (
         <option key={c.id} value={c.id}>
           {c.nombre}
         </option>
       ))}
-      <option value={NEW_CATEGORY_VALUE}>+ New category</option>
+      <option value={NEW_CATEGORY_VALUE}>{t("categories.newCategoryOption")}</option>
     </select>
   );
 }

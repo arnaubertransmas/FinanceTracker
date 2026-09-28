@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { ArrowLeftRight, PiggyBank } from "lucide-react";
 import { TransactionForm } from "./TransactionForm";
 import { BudgetForm } from "./BudgetForm";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { TranslationKey } from "@/lib/i18n/translations";
 
 export type AddTab = "transaction" | "budget";
 
-const TABS: { key: AddTab; label: string; icon: typeof ArrowLeftRight }[] = [
-  { key: "transaction", label: "Transaction", icon: ArrowLeftRight },
-  { key: "budget", label: "Budget", icon: PiggyBank },
+const TABS: { key: AddTab; labelKey: TranslationKey; icon: typeof ArrowLeftRight }[] = [
+  { key: "transaction", labelKey: "transactions.tabTransaction", icon: ArrowLeftRight },
+  { key: "budget", labelKey: "transactions.tabBudget", icon: PiggyBank },
 ];
 
 export function AddModal({
@@ -21,6 +23,7 @@ export function AddModal({
   onClose: () => void;
   initialTab?: AddTab;
 }) {
+  const { t } = useLanguage();
   const [tab, setTab] = useState<AddTab>(initialTab);
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export function AddModal({
     <div className="modal modal-open modal-bottom sm:modal-middle">
       <div className="modal-box">
         <div role="tablist" className="tabs tabs-box mb-4 w-full">
-          {TABS.map(({ key, label, icon: Icon }) => (
+          {TABS.map(({ key, labelKey, icon: Icon }) => (
             <button
               key={key}
               type="button"
@@ -42,7 +45,7 @@ export function AddModal({
               onClick={() => setTab(key)}
             >
               <Icon size={15} strokeWidth={2.25} />
-              {label}
+              {t(labelKey)}
             </button>
           ))}
         </div>
@@ -51,7 +54,7 @@ export function AddModal({
         {tab === "budget" && <BudgetForm onSuccess={onClose} />}
 
         <button type="button" className="btn btn-ghost btn-sm mt-3 w-full" onClick={onClose}>
-          Cancel
+          {t("common.cancel")}
         </button>
       </div>
       <div className="modal-backdrop" onClick={onClose} />

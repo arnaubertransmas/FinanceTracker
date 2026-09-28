@@ -2,14 +2,18 @@
 
 import { ArrowDownCircle, ArrowUpCircle, TrendingUp, type LucideIcon } from "lucide-react";
 import { TransactionType } from "@/schemas/category.schema";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { TranslationKey } from "@/lib/i18n/translations";
 
-const OPTIONS: { value: TransactionType; label: string; icon: LucideIcon; activeClass: string }[] = [
-  { value: "INCOME", label: "Income", icon: ArrowUpCircle, activeClass: "btn-success" },
-  { value: "EXPENSE", label: "Expense", icon: ArrowDownCircle, activeClass: "btn-error" },
-  { value: "INVESTMENT", label: "Invest", icon: TrendingUp, activeClass: "btn-info" },
+const OPTIONS: { value: TransactionType; labelKey: TranslationKey; icon: LucideIcon; activeClass: string }[] = [
+  { value: "INCOME", labelKey: "transactions.typeIncome", icon: ArrowUpCircle, activeClass: "btn-success" },
+  { value: "EXPENSE", labelKey: "transactions.typeExpense", icon: ArrowDownCircle, activeClass: "btn-error" },
+  { value: "INVESTMENT", labelKey: "transactions.typeInvest", icon: TrendingUp, activeClass: "btn-info" },
 ];
 
 export function TypeSelector({ value, onChange }: { value: TransactionType; onChange: (type: TransactionType) => void }) {
+  const { t } = useLanguage();
+
   return (
     <div className="grid grid-cols-3 gap-2">
       {OPTIONS.map((option) => {
@@ -23,7 +27,7 @@ export function TypeSelector({ value, onChange }: { value: TransactionType; onCh
             onClick={() => onChange(option.value)}
           >
             <Icon size={22} strokeWidth={2} />
-            <span className="text-sm">{option.label}</span>
+            <span className="text-sm">{t(option.labelKey)}</span>
           </button>
         );
       })}

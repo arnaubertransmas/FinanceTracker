@@ -35,7 +35,7 @@ function EditBudgetForm({ budget, onCancel, onSaved }: { budget: Budget; onCance
       });
       onSaved();
     } catch {
-      setError("Could not save changes");
+      setError(t("common.couldNotSaveChanges"));
     }
   }
 
@@ -159,7 +159,7 @@ export default function BudgetsPage() {
                           type="button"
                           className="btn btn-ghost btn-xs"
                           onClick={() => setEditingId(budget.id)}
-                          aria-label={`Edit budget for ${budget.category.nombre}`}
+                          aria-label={t("budgets.editBudgetFor", { name: budget.category.nombre })}
                         >
                           <Pencil size={14} />
                         </button>
@@ -167,7 +167,7 @@ export default function BudgetsPage() {
                           type="button"
                           className="btn btn-ghost btn-xs text-error"
                           onClick={() => deleteBudget.mutate(budget.id)}
-                          aria-label={`Delete budget for ${budget.category.nombre}`}
+                          aria-label={t("budgets.deleteBudgetFor", { name: budget.category.nombre })}
                         >
                           <Trash2 size={14} />
                         </button>

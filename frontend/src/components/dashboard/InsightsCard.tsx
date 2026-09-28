@@ -95,9 +95,9 @@ function AllocationPie({ income, expense, invested }: { income: number; expense:
   const total = savings + invested + expense;
 
   const data = [
-    { name: "Saved", value: savings, color: "var(--color-success)" },
-    { name: "Invested", value: invested, color: "var(--color-info)" },
-    { name: "Spent", value: expense, color: "var(--color-error)" },
+    { name: t("insights.saved"), value: savings, color: "var(--color-success)" },
+    { name: t("insights.invested"), value: invested, color: "var(--color-info)" },
+    { name: t("insights.spent"), value: expense, color: "var(--color-error)" },
   ].filter((d) => d.value > 0);
 
   if (total === 0) {

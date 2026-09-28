@@ -14,14 +14,14 @@ function ResetPasswordForm({ user, onCancel, onDone }: { user: AdminUser; onCanc
 
   async function handleSave() {
     if (!password) {
-      setError("Password is required");
+      setError(t("admin.passwordRequired"));
       return;
     }
     try {
       await resetPassword.mutateAsync({ id: user.id, password });
       onDone();
     } catch {
-      setError("Could not reset the password");
+      setError(t("admin.couldNotResetPassword"));
     }
   }
 
@@ -30,7 +30,7 @@ function ResetPasswordForm({ user, onCancel, onDone }: { user: AdminUser; onCanc
       <input
         type="text"
         className="input input-sm"
-        placeholder="New password"
+        placeholder={t("admin.newPasswordPlaceholder")}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         autoFocus
@@ -60,7 +60,7 @@ function CreateUserForm() {
     e.preventDefault();
     setError(null);
     if (!email.trim() || !password) {
-      setError("Username and password are required");
+      setError(t("admin.usernamePasswordRequired"));
       return;
     }
     try {
@@ -69,7 +69,7 @@ function CreateUserForm() {
       setPassword("");
       setRole("USER");
     } catch {
-      setError("Could not create the user (username may already exist)");
+      setError(t("admin.couldNotCreateUser"));
     }
   }
 
@@ -121,13 +121,13 @@ export function AdminUsersView({ currentUserId }: { currentUserId: string }) {
   const [error, setError] = useState<string | null>(null);
 
   async function handleDelete(user: AdminUser) {
-    if (!window.confirm(`Delete ${user.email} and all their data? This cannot be undone.`)) {
+    if (!window.confirm(t("admin.confirmDelete", { email: user.email }))) {
       return;
     }
     try {
       await deleteUser.mutateAsync(user.id);
     } catch {
-      setError("Could not delete this user");
+      setError(t("admin.couldNotDeleteUser"));
     }
   }
 
@@ -135,7 +135,7 @@ export function AdminUsersView({ currentUserId }: { currentUserId: string }) {
     try {
       await updateRole.mutateAsync({ id: user.id, role });
     } catch {
-      setError("Could not update this user's role");
+      setError(t("admin.couldNotUpdateRole"));
     }
   }
 
@@ -172,8 +172,11 @@ export function AdminUsersView({ currentUserId }: { currentUserId: string }) {
                         {user.role === "ADMIN" && <ShieldCheck size={14} className="text-primary" />}
                       </span>
                       <span className="text-xs opacity-60">
-                        {user._count.transactions} transactions · {user._count.categories} categories ·{" "}
-                        {user._count.budgets} budgets
+                        {t("admin.summary", {
+                          tx: String(user._count.transactions),
+                          cat: String(user._count.categories),
+                          budgets: String(user._count.budgets),
+                        })}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
@@ -182,7 +185,7 @@ export function AdminUsersView({ currentUserId }: { currentUserId: string }) {
                         value={user.role}
                         disabled={user.id === currentUserId || updateRole.isPending}
                         onChange={(e) => handleRoleChange(user, e.target.value as UserRole)}
-                        aria-label={`Role for ${user.email}`}
+                        aria-label={t("admin.roleFor", { email: user.email })}
                       >
                         <option value="USER">{t("admin.roleUser")}</option>
                         <option value="ADMIN">{t("admin.roleAdmin")}</option>
@@ -191,7 +194,7 @@ export function AdminUsersView({ currentUserId }: { currentUserId: string }) {
                         type="button"
                         className="btn btn-ghost btn-xs"
                         onClick={() => setResettingId(user.id)}
-                        aria-label={`Reset password for ${user.email}`}
+                        aria-label={t("admin.resetPasswordFor", { email: user.email })}
                       >
                         <KeyRound size={14} />
                       </button>
@@ -200,7 +203,7 @@ export function AdminUsersView({ currentUserId }: { currentUserId: string }) {
                         className="btn btn-ghost btn-xs text-error"
                         onClick={() => handleDelete(user)}
                         disabled={user.id === currentUserId}
-                        aria-label={`Delete ${user.email}`}
+                        aria-label={t("admin.deleteUserFor", { email: user.email })}
                       >
                         <Trash2 size={14} />
                       </button>

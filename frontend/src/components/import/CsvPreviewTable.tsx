@@ -1,8 +1,10 @@
 "use client";
 
 import { CsvRowResult } from "@/schemas/csv-import.schema";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export function CsvPreviewTable({ validRows, errorRows }: { validRows: CsvRowResult[]; errorRows: CsvRowResult[] }) {
+  const { t } = useLanguage();
   const allRows = [...validRows, ...errorRows].sort((a, b) => a.rowNumber - b.rowNumber);
 
   return (
@@ -10,13 +12,13 @@ export function CsvPreviewTable({ validRows, errorRows }: { validRows: CsvRowRes
       <table className="table table-sm">
         <thead>
           <tr>
-            <th>Row</th>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Category</th>
-            <th>Amount</th>
-            <th>Description</th>
-            <th>Status</th>
+            <th>{t("csvImport.colRow")}</th>
+            <th>{t("csvImport.colDate")}</th>
+            <th>{t("csvImport.colType")}</th>
+            <th>{t("csvImport.colCategory")}</th>
+            <th>{t("csvImport.colAmount")}</th>
+            <th>{t("csvImport.colDescription")}</th>
+            <th>{t("csvImport.colStatus")}</th>
           </tr>
         </thead>
         <tbody>
@@ -33,7 +35,7 @@ export function CsvPreviewTable({ validRows, errorRows }: { validRows: CsvRowRes
                   <div className="flex gap-1 flex-wrap">
                     <span className="badge badge-success badge-sm">OK</span>
                     {row.categoryExists === false && (
-                      <span className="badge badge-info badge-sm">new category</span>
+                      <span className="badge badge-info badge-sm">{t("csvImport.newCategory")}</span>
                     )}
                   </div>
                 ) : (

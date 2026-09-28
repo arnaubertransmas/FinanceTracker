@@ -29,14 +29,14 @@ function EditCategoryForm({
 
   async function handleSave() {
     if (!nombre.trim()) {
-      setError("Name is required");
+      setError(t("common.nameRequired"));
       return;
     }
     try {
       await updateCategory.mutateAsync({ id: category.id, input: { nombre: nombre.trim(), color, icono } });
       onSaved();
     } catch {
-      setError("Could not save changes");
+      setError(t("common.couldNotSaveChanges"));
     }
   }
 
@@ -96,7 +96,7 @@ export default function CategoriesPage() {
     e.preventDefault();
     setError(null);
     if (!nombre.trim()) {
-      setError("Name is required");
+      setError(t("common.nameRequired"));
       return;
     }
     try {
@@ -104,7 +104,7 @@ export default function CategoriesPage() {
       setNombre("");
       setIcono("tag");
     } catch {
-      setError("Could not create the category");
+      setError(t("categories.couldNotCreate"));
     }
   }
 
@@ -196,7 +196,7 @@ export default function CategoriesPage() {
                               type="button"
                               className="btn btn-ghost btn-xs"
                               onClick={() => setEditingId(category.id)}
-                              aria-label={`Edit ${category.nombre}`}
+                              aria-label={t("categories.editCategory", { name: category.nombre })}
                             >
                               <Pencil size={14} />
                             </button>
@@ -204,7 +204,7 @@ export default function CategoriesPage() {
                               type="button"
                               className="btn btn-ghost btn-xs text-error"
                               onClick={() => handleDelete(category.id)}
-                              aria-label={`Delete ${category.nombre}`}
+                              aria-label={t("categories.deleteCategory", { name: category.nombre })}
                             >
                               <Trash2 size={14} />
                             </button>

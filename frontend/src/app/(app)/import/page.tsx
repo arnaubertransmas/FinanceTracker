@@ -6,8 +6,10 @@ import { CsvUploadDropzone } from "@/components/import/CsvUploadDropzone";
 import { CsvPreviewTable } from "@/components/import/CsvPreviewTable";
 import { useConfirmCsvImport, usePreviewCsv } from "@/hooks/useCsvImport";
 import { CsvPreviewResult } from "@/schemas/csv-import.schema";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function ImportPage() {
+  const { t } = useLanguage();
   const [preview, setPreview] = useState<CsvPreviewResult | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const previewCsv = usePreviewCsv();
@@ -20,7 +22,7 @@ export default function ImportPage() {
       const data = await previewCsv.mutateAsync(file);
       setPreview(data);
     } catch {
-      setResult("Could not read the file");
+      setResult(t("csvImport.couldNotRead"));
     }
   }
 
@@ -29,10 +31,10 @@ export default function ImportPage() {
     const rows = preview.validRows.map((r) => r.data!);
     try {
       const { imported } = await confirmImport.mutateAsync(rows);
-      setResult(`Successfully imported ${imported} transactions.`);
+      setResult(t("csvImport.importedSuccess", { count: String(imported) }));
       setPreview(null);
     } catch {
-      setResult("Could not complete the import");
+      setResult(t("csvImport.couldNotImport"));
     }
   }
 
@@ -41,10 +43,10 @@ export default function ImportPage() {
       <div className="card bg-base-100 shadow-sm">
         <div className="card-body">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="card-title">Import history (CSV)</h2>
+            <h2 className="card-title">{t("csvImport.title")}</h2>
             <a href="/api/import/template" className="btn btn-sm btn-outline gap-1.5">
               <Download size={14} />
-              Download CSV template
+              {t("csvImport.downloadTemplate")}
             </a>
           </div>
 
@@ -63,7 +65,10 @@ export default function ImportPage() {
           <div className="card-body">
             <div className="flex justify-between items-center mb-2 flex-wrap gap-2">
               <h3 className="font-semibold">
-                Preview: {preview.validRows.length} valid, {preview.errorRows.length} with errors
+                {t("csvImport.preview", {
+                  valid: String(preview.validRows.length),
+                  errors: String(preview.errorRows.length),
+                })}
               </h3>
               <button
                 type="button"
@@ -71,7 +76,9 @@ export default function ImportPage() {
                 onClick={handleConfirm}
                 disabled={confirmImport.isPending || preview.validRows.length === 0}
               >
-                {confirmImport.isPending ? "Importing..." : `Confirm import (${preview.validRows.length})`}
+                {confirmImport.isPending
+                  ? t("csvImport.importing")
+                  : t("csvImport.confirmImport", { count: String(preview.validRows.length) })}
               </button>
             </div>
             <CsvPreviewTable validRows={preview.validRows} errorRows={preview.errorRows} />
