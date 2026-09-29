@@ -38,6 +38,7 @@ export const listTransactionsQuerySchema = z.object({
   from: dateOnly.optional(),
   to: dateOnly.optional(),
   search: z.string().min(1).max(280).optional(),
+  recurring: z.coerce.boolean().optional(),
   page: z.coerce.number().int().positive().optional().default(1),
   pageSize: z.coerce.number().int().positive().max(200).optional().default(50),
 });

@@ -39,6 +39,8 @@ export const translations = {
     "dashboard.overspent": "You've spent more than you earned this period.",
     "dashboard.budgetsTitle": "Budgets",
     "dashboard.noBudgets": "No budgets yet.",
+    "dashboard.recurringTitle": "Recurring transactions",
+    "dashboard.noRecurring": "No recurring transactions yet.",
     "dashboard.netCash": "Net cash",
 
     "insights.overview": "Overview",
@@ -211,6 +213,8 @@ export const translations = {
     "dashboard.overspent": "Has gastat més del que has guanyat aquest període.",
     "dashboard.budgetsTitle": "Pressupostos",
     "dashboard.noBudgets": "Encara no hi ha pressupostos.",
+    "dashboard.recurringTitle": "Transaccions recurrents",
+    "dashboard.noRecurring": "Encara no hi ha transaccions recurrents.",
     "dashboard.netCash": "Efectiu net",
 
     "insights.overview": "Visió general",

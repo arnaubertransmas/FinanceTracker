@@ -72,6 +72,7 @@ export async function listTransactions(userId: string, query: ListTransactionsQu
     userId,
     ...(query.type ? { type: query.type } : {}),
     ...(query.categoryId ? { categoryId: query.categoryId } : {}),
+    ...(query.recurring !== undefined ? { recurring: query.recurring } : {}),
     ...(query.from || query.to
       ? {
           date: {

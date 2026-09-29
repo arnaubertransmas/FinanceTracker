@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { Tags } from "lucide-react";
 import { useBudgetsProgress } from "@/hooks/useBudgets";
 import { useAvailableYears, useDashboardSummary } from "@/hooks/useDashboard";
 import { CleanMoneyCard } from "@/components/dashboard/CleanMoneyCard";
 import { InsightsCard } from "@/components/dashboard/InsightsCard";
+import { RecurringTransactionsCard } from "@/components/dashboard/RecurringTransactionsCard";
 import { CategoryIcon } from "@/components/ui/CategoryIcon";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { MONTH_NAMES } from "@/lib/monthNames";
@@ -121,13 +120,7 @@ export default function DashboardPage() {
       {view === "month" && (
         <div className="card bg-base-100 shadow-sm">
           <div className="card-body">
-            <div className="flex items-center justify-between">
-              <h3 className="card-title text-base">{t("dashboard.budgetsTitle")}</h3>
-              <Link href="/categories" className="btn btn-ghost btn-xs gap-1.5">
-                <Tags size={13} />
-                {t("dashboard.editCategories")}
-              </Link>
-            </div>
+            <h3 className="card-title text-base">{t("dashboard.budgetsTitle")}</h3>
             {budgets.length === 0 ? (
               <p className="opacity-60 text-sm">{t("dashboard.noBudgets")}</p>
             ) : (
@@ -155,6 +148,8 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      <RecurringTransactionsCard />
     </div>
   );
 }

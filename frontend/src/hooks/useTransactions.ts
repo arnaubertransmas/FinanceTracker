@@ -8,6 +8,7 @@ export interface TransactionFilters {
   from?: string;
   to?: string;
   search?: string;
+  recurring?: boolean;
   page?: number;
 }
 
@@ -18,6 +19,7 @@ function buildQuery(filters: TransactionFilters) {
   if (filters.from) params.set("from", filters.from);
   if (filters.to) params.set("to", filters.to);
   if (filters.search) params.set("search", filters.search);
+  if (filters.recurring !== undefined) params.set("recurring", String(filters.recurring));
   if (filters.page) params.set("page", String(filters.page));
   const qs = params.toString();
   return qs ? `?${qs}` : "";

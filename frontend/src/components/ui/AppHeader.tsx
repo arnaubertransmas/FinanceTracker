@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { LayoutDashboard, ArrowLeftRight, PiggyBank, Wallet, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, ArrowLeftRight, PiggyBank, Wallet, ShieldCheck, Tags } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { LogoutButton } from "./LogoutButton";
 
@@ -39,6 +39,9 @@ export function AppHeader({ email, isAdmin }: { email: string; isAdmin: boolean 
             <ShieldCheck size={20} />
           </Link>
         )}
+        <Link href="/categories" className="btn btn-ghost btn-square" aria-label={t("dashboard.editCategories")}>
+          <Tags size={20} />
+        </Link>
         <LogoutButton />
       </div>
     </header>
