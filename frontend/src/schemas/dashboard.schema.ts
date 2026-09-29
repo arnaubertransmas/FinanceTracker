@@ -17,10 +17,6 @@ export interface CategoryBreakdownItem {
 }
 
 export interface HistoryPoint {
-  month: string;
-  income: string;
-  expense: string;
-  investment: string;
+  date: string;
   wealth: string;
-  savingsPercent: string;
 }

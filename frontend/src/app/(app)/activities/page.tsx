@@ -103,6 +103,12 @@ export default function TransactionsPage() {
   }, [searchInput]);
 
   const { data: categories = [] } = useCategories();
+  const filteredCategories = type ? categories.filter((c) => c.tipo === type) : categories;
+
+  function handleTypeChange(next: string) {
+    setType(next);
+    setCategoryId("");
+  }
   const { data, isLoading } = useTransactions({
     type: type || undefined,
     categoryId: categoryId || undefined,
@@ -147,7 +153,7 @@ export default function TransactionsPage() {
               onChange={(e) => setSearchInput(e.target.value)}
             />
           </label>
-          <select className="select select-sm" value={type} onChange={(e) => setType(e.target.value)}>
+          <select className="select select-sm" value={type} onChange={(e) => handleTypeChange(e.target.value)}>
             <option value="">{t("activities.allTypes")}</option>
             <option value="INCOME">{t("activities.income")}</option>
             <option value="EXPENSE">{t("activities.expenses")}</option>
@@ -155,7 +161,7 @@ export default function TransactionsPage() {
           </select>
           <select className="select select-sm" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
             <option value="">{t("activities.allCategories")}</option>
-            {categories.map((c) => (
+            {filteredCategories.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.nombre}
               </option>
@@ -204,7 +210,7 @@ export default function TransactionsPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className={`text-lg font-semibold ${TYPE_AMOUNT_CLASS[tx.type]}`}>
-                        {tx.type === "EXPENSE" ? "−" : "+"}€{tx.amount}
+                        {tx.type === "INCOME" ? "+" : tx.type === "EXPENSE" ? "−" : ""}€{tx.amount}
                       </span>
                       <button
                         type="button"

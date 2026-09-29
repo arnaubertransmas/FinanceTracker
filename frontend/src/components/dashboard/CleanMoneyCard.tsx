@@ -1,7 +1,7 @@
 import { AlertTriangle, Wallet } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-export function CleanMoneyCard({ amount }: { amount: number }) {
+export function CleanMoneyCard({ amount, percent }: { amount: number; percent: number }) {
   const { t } = useLanguage();
   const isPositive = amount >= 0;
   return (
@@ -15,9 +15,14 @@ export function CleanMoneyCard({ amount }: { amount: number }) {
           {isPositive ? <Wallet size={20} strokeWidth={2.25} /> : <AlertTriangle size={20} strokeWidth={2.25} />}
         </span>
         <span className="text-sm uppercase tracking-wide opacity-60">{t("dashboard.wealth")}</span>
-        <span className={`text-5xl font-bold ${isPositive ? "text-success" : "text-error"}`}>
-          {amount.toLocaleString("en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
-        </span>
+        <div className="flex items-baseline gap-2">
+          <span className={`text-5xl font-bold ${isPositive ? "text-success" : "text-error"}`}>
+            {amount.toLocaleString("en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 })}
+          </span>
+          <span className={`text-lg font-semibold ${isPositive ? "text-success" : "text-error"}`}>
+            ({percent.toFixed(0)}%)
+          </span>
+        </div>
         <span className="text-xs opacity-60">{t("dashboard.wealthHint")}</span>
 
         {!isPositive && (

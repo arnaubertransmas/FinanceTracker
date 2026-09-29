@@ -303,18 +303,21 @@ function WealthTab({ view, year, month }: { view: PeriodView; year: number; mont
   const { t } = useLanguage();
   const { data: series = [], isLoading } = useDashboardHistory();
 
-  const filtered: HistoryPoint[] = series.filter((p) => inPeriod(`${p.month}-01`, view, year, month));
+  const filtered: HistoryPoint[] = series.filter((p) => inPeriod(p.date, view, year, month));
 
   let baselineWealth = 0;
   if (view !== "all") {
     const periodStart = periodStartKey(view, year, month);
     for (const p of series) {
-      if (`${p.month}-01` < periodStart) baselineWealth = Number(p.wealth);
+      if (p.date < periodStart) baselineWealth = Number(p.wealth);
       else break;
     }
   }
 
-  const chartData = filtered.map((point) => ({ month: point.month, value: Number(point.wealth) - baselineWealth }));
+  const chartData = filtered.map((point) => ({ date: point.date, value: Number(point.wealth) - baselineWealth }));
+  if (view !== "all" && chartData.length > 0 && chartData[0].value !== 0) {
+    chartData.unshift({ date: periodStartKey(view, year, month), value: 0 });
+  }
 
   const latest = chartData.at(-1)?.value ?? 0;
   const numberColor = latest >= 0 ? "text-success" : "text-error";
@@ -339,11 +342,8 @@ function WealthTab({ view, year, month }: { view: PeriodView; year: number; mont
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-base-200)" />
                 <XAxis
-                  dataKey="month"
-                  tickFormatter={(m) => {
-                    const [y, mo] = m.split("-").map(Number);
-                    return new Date(Date.UTC(y, mo - 1, 1)).toLocaleDateString("en-US", { month: "short", year: "2-digit" });
-                  }}
+                  dataKey="date"
+                  tickFormatter={(d) => new Date(`${d}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   fontSize={12}
                 />
                 <YAxis
@@ -352,10 +352,7 @@ function WealthTab({ view, year, month }: { view: PeriodView; year: number; mont
                   width={60}
                 />
                 <Tooltip
-                  labelFormatter={(label) => {
-                    const [y, mo] = (label as string).split("-").map(Number);
-                    return new Date(Date.UTC(y, mo - 1, 1)).toLocaleDateString("en-US", { month: "short", year: "2-digit" });
-                  }}
+                  labelFormatter={(label) => new Date(`${label}T00:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                   formatter={(v) => formatEuro(Number(v))}
                   contentStyle={{
                     fontSize: 12,

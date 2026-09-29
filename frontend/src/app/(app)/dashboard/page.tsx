@@ -113,7 +113,7 @@ export default function DashboardPage() {
         <p className="opacity-60">{t("common.loading")}</p>
       ) : (
         <>
-          <CleanMoneyCard amount={Number(summary.cleanMoney)} />
+          <CleanMoneyCard amount={Number(summary.cleanMoney)} percent={Number(summary.savingsPercent)} />
           <InsightsCard year={activeYear} month={activeMonth} summary={summary} />
         </>
       )}

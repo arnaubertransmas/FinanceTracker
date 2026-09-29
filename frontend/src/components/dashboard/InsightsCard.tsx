@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Wallet, PiggyBank, ArrowUpCircle, ArrowDownCircle, TrendingUp } from "lucide-react";
-import { Cell, Pie, PieChart, PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip } from "recharts";
+import { AlertTriangle, Wallet, ArrowUpCircle, ArrowDownCircle, TrendingUp } from "lucide-react";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useCategoryBreakdown } from "@/hooks/useDashboard";
 import { DashboardSummary } from "@/schemas/dashboard.schema";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-type InsightTab = "total" | "savings" | "income" | "spending" | "investing";
+type InsightTab = "total" | "income" | "spending" | "investing";
 
 const INCOME_SHADES = ["#4ade80", "#86efac", "#bbf7d0", "#dcfce7", "#f0fdf4"];
 const INVEST_SHADES = ["#60a5fa", "#93c5fd", "#bfdbfe", "#dbeafe", "#eff6ff"];
@@ -23,26 +23,6 @@ function shadeForCategory(categoryId: string, shades: string[]) {
 
 function formatEuro(value: number) {
   return value.toLocaleString("en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
-}
-
-function SavingsRing({ percent }: { percent: number }) {
-  const color = percent >= 20 ? "var(--color-success)" : percent >= 0 ? "var(--color-warning)" : "var(--color-error)";
-  const clamped = Math.max(0, Math.min(100, percent));
-  const data = [{ value: clamped, fill: color }];
-
-  return (
-    <div className="relative w-40 h-40 shrink-0">
-      <RadialBarChart width={160} height={160} innerRadius="70%" outerRadius="100%" data={data} startAngle={90} endAngle={-270}>
-        <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-        <RadialBar dataKey="value" cornerRadius={8} background={{ fill: "var(--color-base-200)" }} />
-      </RadialBarChart>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-4xl font-bold" style={{ color }}>
-          {percent.toFixed(0)}%
-        </span>
-      </div>
-    </div>
-  );
 }
 
 function CategoryPie({
@@ -91,11 +71,10 @@ function CategoryPie({
 
 function AllocationPie({ income, expense, invested }: { income: number; expense: number; invested: number }) {
   const { t } = useLanguage();
-  const savings = Math.max(income - expense - invested, 0);
-  const total = savings + invested + expense;
+  const total = income + invested + expense;
 
   const data = [
-    { name: t("insights.saved"), value: savings, color: "var(--color-success)" },
+    { name: t("insights.totalIncome"), value: income, color: "#bbf7d0" },
     { name: t("insights.invested"), value: invested, color: "var(--color-info)" },
     { name: t("insights.spent"), value: expense, color: "var(--color-error)" },
   ].filter((d) => d.value > 0);
@@ -105,7 +84,7 @@ function AllocationPie({ income, expense, invested }: { income: number; expense:
   }
 
   return (
-    <div className="relative w-40 h-40 shrink-0">
+    <div className="w-40 h-40 shrink-0">
       <ResponsiveContainer>
         <PieChart>
           <Pie data={data} dataKey="value" nameKey="name" innerRadius="55%" outerRadius="100%" paddingAngle={2}>
@@ -126,10 +105,6 @@ function AllocationPie({ income, expense, invested }: { income: number; expense:
           />
         </PieChart>
       </ResponsiveContainer>
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span className="text-[10px] uppercase tracking-wide opacity-60">{t("insights.totalIncome")}</span>
-        <span className="text-base font-bold">{formatEuro(income)}</span>
-      </div>
     </div>
   );
 }
@@ -148,19 +123,17 @@ export function InsightsCard({
   const breakdownType = tab === "income" ? "INCOME" : tab === "investing" ? "INVESTMENT" : "EXPENSE";
   const { data: breakdown = [] } = useCategoryBreakdown(year, month, breakdownType);
 
-  const TABS: { key: InsightTab; label: string; icon: typeof PiggyBank }[] = [
+  const TABS: { key: InsightTab; label: string; icon: typeof Wallet }[] = [
     { key: "total", label: t("insights.overview"), icon: Wallet },
-    { key: "savings", label: t("insights.savingsRate"), icon: PiggyBank },
     { key: "income", label: t("insights.income"), icon: ArrowUpCircle },
     { key: "spending", label: t("insights.spending"), icon: ArrowDownCircle },
     { key: "investing", label: t("insights.investing"), icon: TrendingUp },
   ];
 
-  const cleanMoney = Number(summary?.cleanMoney ?? 0);
+  const netCash = Number(summary?.income ?? 0) - Number(summary?.expense ?? 0) - Number(summary?.investment ?? 0);
 
   const totals: Record<InsightTab, { label: string; amount: number; color: string }> = {
     total: { label: t("insights.totalIncome"), amount: Number(summary?.income ?? 0), color: "text-success" },
-    savings: { label: t("insights.saved"), amount: cleanMoney, color: cleanMoney >= 0 ? "text-success" : "text-error" },
     income: { label: t("insights.totalIncome"), amount: Number(summary?.income ?? 0), color: "text-success" },
     spending: { label: t("insights.totalSpent"), amount: Number(summary?.expense ?? 0), color: "text-error" },
     investing: { label: t("insights.totalInvested"), amount: Number(summary?.investment ?? 0), color: "text-info" },
@@ -189,9 +162,12 @@ export function InsightsCard({
 
         <div className="flex items-center gap-6 mt-3">
           {tab === "total" && summary && (
-            <AllocationPie income={Number(summary.income)} expense={Number(summary.expense)} invested={Number(summary.investment)} />
+            <AllocationPie
+              income={Number(summary.income)}
+              expense={Number(summary.expense)}
+              invested={Number(summary.investment)}
+            />
           )}
-          {tab === "savings" && <SavingsRing percent={Number(summary?.savingsPercent ?? 0)} />}
           {(tab === "income" || tab === "spending" || tab === "investing") && (
             <CategoryPie
               data={breakdown}
@@ -199,10 +175,26 @@ export function InsightsCard({
             />
           )}
 
-          <div>
-            <div className="text-sm uppercase tracking-wide opacity-60">{active.label}</div>
-            <div className={`text-4xl font-bold ${active.color}`}>{formatEuro(active.amount)}</div>
-          </div>
+          {tab === "total" ? (
+            <div className="flex flex-col gap-3">
+              <div>
+                <div className="text-sm uppercase tracking-wide opacity-60">{t("insights.totalIncome")}</div>
+                <div className="text-4xl font-bold text-success">{formatEuro(Number(summary?.income ?? 0))}</div>
+              </div>
+              <div>
+                <div className="text-sm uppercase tracking-wide opacity-60">{t("dashboard.netCash")}</div>
+                <div className={`text-2xl font-bold ${netCash >= 0 ? "text-success" : "text-error"}`}>
+                  {formatEuro(netCash)}
+                </div>
+                <div className="text-xs opacity-50 mt-0.5">{t("insights.netCashHint")}</div>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="text-sm uppercase tracking-wide opacity-60">{active.label}</div>
+              <div className={`text-4xl font-bold ${active.color}`}>{formatEuro(active.amount)}</div>
+            </div>
+          )}
         </div>
 
         {tab === "total" && overspent > 0 && (

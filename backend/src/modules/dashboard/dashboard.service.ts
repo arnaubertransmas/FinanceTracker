@@ -1,6 +1,7 @@
 import { Prisma, TransactionType } from "@prisma/client";
+import { subDays } from "date-fns";
 import { prisma } from "../../lib/prisma";
-import { periodRange, yearRange } from "../../lib/dates";
+import { parseDateOnly, periodRange, toDateOnlyString, yearRange } from "../../lib/dates";
 
 const ZERO = new Prisma.Decimal(0);
 
@@ -74,7 +75,7 @@ export async function getMonthlyBreakdown(userId: string, year: number) {
 
 export async function getHistory(userId: string) {
   const transactions = await prisma.transaction.findMany({
-    where: { userId },
+    where: { userId, type: { in: ["INCOME", "EXPENSE"] } },
     select: { date: true, type: true, amount: true },
     orderBy: { date: "asc" },
   });
@@ -83,43 +84,22 @@ export async function getHistory(userId: string) {
     return { series: [] };
   }
 
-  const firstDate = transactions[0].date;
-  const now = new Date();
-  const months: string[] = [];
-  let cursor = new Date(Date.UTC(firstDate.getUTCFullYear(), firstDate.getUTCMonth(), 1));
-  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-  while (cursor <= end) {
-    months.push(`${cursor.getUTCFullYear()}-${String(cursor.getUTCMonth() + 1).padStart(2, "0")}`);
-    cursor = new Date(Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth() + 1, 1));
-  }
-
-  const byMonth = new Map<string, { income: Prisma.Decimal; expense: Prisma.Decimal; investment: Prisma.Decimal }>();
-  for (const m of months) byMonth.set(m, { income: ZERO, expense: ZERO, investment: ZERO });
-
+  const netByDate = new Map<string, Prisma.Decimal>();
   for (const t of transactions) {
-    const key = `${t.date.getUTCFullYear()}-${String(t.date.getUTCMonth() + 1).padStart(2, "0")}`;
-    const bucket = byMonth.get(key);
-    if (!bucket) continue;
-    if (t.type === "INCOME") bucket.income = bucket.income.plus(t.amount);
-    else if (t.type === "EXPENSE") bucket.expense = bucket.expense.plus(t.amount);
-    else bucket.investment = bucket.investment.plus(t.amount);
+    const key = toDateOnlyString(t.date);
+    const delta = t.type === "INCOME" ? t.amount : t.amount.negated();
+    netByDate.set(key, (netByDate.get(key) ?? ZERO).plus(delta));
   }
 
+  const dates = Array.from(netByDate.keys()).sort();
   let cumulativeWealth = ZERO;
-  const series = months.map((month) => {
-    const b = byMonth.get(month)!;
-    const net = b.income.minus(b.expense);
-    cumulativeWealth = cumulativeWealth.plus(net);
-    const savingsPercent = b.income.isZero() ? ZERO : net.dividedBy(b.income).times(100);
-    return {
-      month,
-      income: b.income,
-      expense: b.expense,
-      investment: b.investment,
-      wealth: cumulativeWealth,
-      savingsPercent,
-    };
+  const series = dates.map((date) => {
+    cumulativeWealth = cumulativeWealth.plus(netByDate.get(date)!);
+    return { date, wealth: cumulativeWealth };
   });
+
+  const zeroDate = toDateOnlyString(subDays(parseDateOnly(dates[0]), 1));
+  series.unshift({ date: zeroDate, wealth: ZERO });
 
   return { series };
 }
